@@ -1,0 +1,440 @@
+import React, { useState } from 'react';
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+  AreaChart, Area, Cell, PieChart, Pie, Legend 
+} from 'recharts';
+import { 
+  Layout, TrendingUp, AlertTriangle, Users, CheckCircle, 
+  Shield, Zap, Clock, DollarSign, Target, FileText, Globe,
+  ArrowUpRight, BarChart3, PieChart as PieIcon
+} from 'lucide-react';
+
+// Simulated Data for Charts
+const financialData = [
+  { year: 'Year 0', cashFlow: -310, cumulative: -310 },
+  { year: 'Year 1', cashFlow: 54, cumulative: -256 },
+  { year: 'Year 2', cashFlow: 54, cumulative: -202 },
+  { year: 'Year 3', cashFlow: 54, cumulative: -148 },
+  { year: 'Year 4', cashFlow: 57, cumulative: -91 },
+  { year: 'Year 5', cashFlow: 57, cumulative: -34 },
+  { year: 'Year 6', cashFlow: 57, cumulative: 23 },
+  { year: 'Year 7', cashFlow: 60, cumulative: 83 },
+  { year: 'Year 8', cashFlow: 60, cumulative: 143 },
+  { year: 'Year 9', cashFlow: 60, cumulative: 203 },
+  { year: 'Year 10', cashFlow: 63, cumulative: 266 },
+];
+
+const capexBreakdown = [
+  { name: 'Solar Array', value: 140, color: '#fbbf24' },
+  { name: 'BESS Storage', value: 75, color: '#3b82f6' },
+  { name: 'Grid & AHS', value: 55, color: '#10b981' },
+  { name: 'FIFO & Contingency', value: 40, color: '#94a3b8' },
+];
+
+const App = () => {
+  const [activeTab, setActiveTab] = useState('overview');
+
+  const menuItems = [
+    { id: 'overview', label: 'Executive Summary', icon: <Layout size={20} /> },
+    { id: 'analytics', label: 'Financial Analytics', icon: <TrendingUp size={20} /> },
+    { id: 'risk', label: 'Risk Landscape', icon: <AlertTriangle size={20} /> },
+    { id: 'ops', label: 'Operational Readiness', icon: <Users size={20} /> },
+    { id: 'status', label: 'Milestones', icon: <CheckCircle size={20} /> },
+  ];
+
+  return (
+    <div className="flex min-h-screen bg-slate-50 font-sans text-slate-900">
+      {/* Sidebar */}
+      <aside className="w-72 bg-slate-900 text-white flex flex-col fixed h-full z-20 shadow-2xl">
+        <div className="p-8">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="bg-blue-600 p-2 rounded-lg">
+              <Zap className="text-white" size={24} />
+            </div>
+            <h1 className="text-2xl font-black tracking-tighter italic">PISDOE</h1>
+          </div>
+          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">Tier-1 Mining Portfolio</p>
+        </div>
+
+        <nav className="flex-1 px-4 space-y-2">
+          {menuItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-300 ${
+                activeTab === item.id 
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/40 translate-x-2' 
+                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+              }`}
+            >
+              {item.icon}
+              <span className="font-bold text-sm tracking-wide">{item.label}</span>
+            </button>
+          ))}
+        </nav>
+
+        <div className="p-6 mt-auto">
+          <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+              <span className="text-[10px] font-black uppercase text-emerald-400 tracking-widest">Live: Week 12</span>
+            </div>
+            <p className="text-xs text-slate-400 font-medium">Hamersley Basin Asset</p>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 ml-72 p-12">
+        {/* Header */}
+        <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-blue-600 font-black text-xs uppercase tracking-[0.3em]">
+              <Globe size={14} />
+              Western Australia | Pilbara Region
+            </div>
+            <h2 className="text-5xl font-black text-slate-900 tracking-tighter">
+              Strategic Decarbonization <span className="text-blue-600 italic">Dashboard</span>
+            </h2>
+            <p className="text-slate-500 text-lg font-medium max-w-2xl">
+              Integrating 120MW Solar/BESS Microgrid for Tier-1 Iron Ore Operations.
+            </p>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="bg-white px-8 py-6 rounded-[2rem] shadow-sm border border-slate-200 text-center">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Project NPV</p>
+              <p className="text-3xl font-black text-slate-900">$124M</p>
+            </div>
+            <div className="bg-blue-600 px-8 py-6 rounded-[2rem] shadow-xl shadow-blue-100 text-center text-white">
+              <p className="text-[10px] font-black text-blue-100 uppercase tracking-widest mb-1">Target IRR</p>
+              <p className="text-3xl font-black">16.8%</p>
+            </div>
+          </div>
+        </header>
+
+        {/* Dynamic Tabs */}
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+          
+          {activeTab === 'overview' && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2 space-y-8">
+                <section className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-slate-200">
+                  <h3 className="text-2xl font-black mb-6 flex items-center gap-3">
+                    <Target className="text-blue-600" /> JORC Compliance Baseline
+                  </h3>
+                  <p className="text-slate-600 text-lg leading-relaxed mb-8">
+                    Following <strong>JORC Code 2012</strong> standards, the project optimizes 
+                    <strong> 250Mt of Proved Reserves</strong> at 61.5% Fe. By reducing 
+                    diesel dependency by 45%, we achieve a direct <strong>C1 Cash Cost 
+                    reduction of $2.30/t</strong>, securing long-term asset value.
+                  </p>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
+                      <p className="text-xs font-black text-blue-600 uppercase tracking-widest mb-2">Energy Mix</p>
+                      <p className="text-3xl font-black text-slate-900">45% Green</p>
+                      <p className="text-xs text-slate-400 font-bold mt-1">Solar Displacement Target</p>
+                    </div>
+                    <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
+                      <p className="text-xs font-black text-emerald-600 uppercase tracking-widest mb-2">Carbon Impact</p>
+                      <p className="text-3xl font-black text-slate-900">-85k tCO2e</p>
+                      <p className="text-xs text-slate-400 font-bold mt-1">Annual Emissions Abated</p>
+                    </div>
+                  </div>
+                </section>
+
+                <section className="bg-slate-900 text-white p-10 rounded-[2.5rem] shadow-2xl overflow-hidden relative">
+                  <div className="absolute top-0 right-0 p-10 opacity-10">
+                    <Shield size={120} />
+                  </div>
+                  <h3 className="text-xl font-black mb-8 uppercase tracking-widest text-blue-400">Strategic Integration</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                      <p className="font-black text-lg mb-2">Autonomous Haulage (AHS)</p>
+                      <p className="text-sm text-slate-400 italic">Full fleet retrofit for EV charging cycles integration.</p>
+                    </div>
+                    <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                      <p className="font-black text-lg mb-2">Region D Resilience</p>
+                      <p className="text-sm text-slate-400 italic">AS1170.2 compliance for severe cyclonic activity.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200">
+                <h3 className="text-lg font-black mb-6 uppercase tracking-widest">Kick-off Agenda</h3>
+                <div className="space-y-4">
+                  {[
+                    { label: "Executive Vision", time: "05 min" },
+                    { label: "Technical FEED Review", time: "15 min" },
+                    { label: "JORC Resource Baseline", time: "20 min" },
+                    { label: "FIFO Logistics Plan", time: "10 min" },
+                    { label: "Safety & TRIFR Targets", time: "10 min" }
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border-l-4 border-blue-600 transition-transform hover:scale-105">
+                      <span className="text-sm font-bold text-slate-700">{item.label}</span>
+                      <span className="text-[10px] font-black bg-white px-2 py-1 rounded shadow-sm text-slate-400">{item.time}</span>
+                    </div>
+                  ))}
+                </div>
+                <button className="w-full mt-10 py-5 bg-slate-900 text-white rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] hover:bg-blue-600 transition-all shadow-xl flex items-center justify-center gap-2">
+                  <FileText size={18} />
+                  Access Technical Docs
+                </button>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'analytics' && (
+            <div className="space-y-8 animate-in zoom-in-95 duration-500">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Cash Flow Area Chart */}
+                <div className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-slate-200">
+                  <div className="flex items-center justify-between mb-8">
+                    <h3 className="text-xl font-black uppercase tracking-widest">Cumulative Cash Flow</h3>
+                    <div className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-black uppercase">Break-even: Year 5.4</div>
+                  </div>
+                  <div className="h-[300px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={financialData}>
+                        <defs>
+                          <linearGradient id="colorCum" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                        <XAxis dataKey="year" fontSize={10} axisLine={false} tickLine={false} />
+                        <YAxis fontSize={10} axisLine={false} tickLine={false} tickFormatter={(val) => `$${val}M`} />
+                        <Tooltip 
+                          contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '12px', color: '#fff' }}
+                          itemStyle={{ color: '#60a5fa', fontWeight: 'bold' }}
+                        />
+                        <Area type="monotone" dataKey="cumulative" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorCum)" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                {/* CAPEX Pie Chart */}
+                <div className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-slate-200">
+                  <h3 className="text-xl font-black uppercase tracking-widest mb-8">CAPEX Allocation ($310M)</h3>
+                  <div className="h-[300px] w-full flex items-center">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={capexBreakdown}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={100}
+                          paddingAngle={8}
+                          dataKey="value"
+                        >
+                          {capexBreakdown.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend verticalAlign="bottom" height={36}/>
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[
+                  { label: "Payback Period", value: "5.4 Yrs", icon: <Clock />, color: "text-blue-600" },
+                  { label: "Cost Saving / Tonne", value: "-$2.30", icon: <TrendingUp />, color: "text-emerald-600" },
+                  { label: "Contingency Fund", value: "$40M AUD", icon: <DollarSign />, color: "text-slate-500" },
+                ].map((stat, idx) => (
+                  <div key={idx} className="bg-white p-8 rounded-3xl border border-slate-200 flex items-center gap-6">
+                    <div className="p-4 bg-slate-50 rounded-2xl text-blue-600 uppercase">
+                      {stat.icon}
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{stat.label}</p>
+                      <p className={`text-2xl font-black ${stat.color}`}>{stat.value}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'risk' && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-slate-200">
+                <h3 className="text-xl font-black mb-10 flex items-center gap-3">
+                  <Shield className="text-amber-500" /> Strategic Risk Matrix (5x5)
+                </h3>
+                <div className="grid grid-cols-5 gap-2 aspect-square max-w-[450px] mx-auto">
+                  {/* Visual Risk Grid */}
+                  {[...Array(25)].map((_, i) => {
+                    const row = Math.floor(i / 5);
+                    const col = i % 5;
+                    let color = 'bg-emerald-50';
+                    if (row + col >= 6) color = 'bg-rose-500/80';
+                    else if (row + col >= 4) color = 'bg-amber-400/80';
+                    else if (row + col >= 2) color = 'bg-amber-100';
+                    
+                    return (
+                      <div key={i} className={`${color} rounded-lg flex items-center justify-center relative group cursor-help`}>
+                        {i === 4 && <div className="absolute w-4 h-4 bg-slate-900 rounded-full border-2 border-white animate-bounce shadow-lg" title="Cyclone Activity"></div>}
+                        {i === 8 && <div className="absolute w-4 h-4 bg-slate-900 rounded-full border-2 border-white shadow-lg" title="Labor Shortage"></div>}
+                      </div>
+                    )
+                  })}
+                </div>
+                <div className="mt-8 flex justify-between text-[10px] font-black uppercase text-slate-400 border-t pt-4 tracking-widest">
+                  <span>Insignificant Impact</span>
+                  <span>Catastrophic Impact</span>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {[
+                  { id: "R-01", risk: "Cyclone Activity (Region D)", impact: "Severe", mit: "AS1170.2 Rated Structures & FIFO Evacuation Plan." },
+                  { id: "R-02", risk: "FIFO Labor Shortage", impact: "High", mit: "Retention Bonuses & Remote Area Allowance contracts." },
+                  { id: "R-03", risk: "AHS Integration Latency", impact: "Moderate", mit: "Digital Twin simulation and 5G low-latency micro-grid." },
+                  { id: "R-04", risk: "Heritage & Native Title", impact: "Critical", mit: "Banjima Group ongoing consultation & site mapping." }
+                ].map((r, idx) => (
+                  <div key={idx} className="bg-white p-6 rounded-3xl border border-slate-200 border-l-[12px] border-l-blue-600 hover:shadow-xl transition-all">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-xs font-black bg-slate-900 text-white px-3 py-1 rounded-full uppercase">{r.id}</span>
+                      <span className={`text-[10px] font-black uppercase px-2 py-1 rounded ${r.impact === 'Severe' || r.impact === 'Critical' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'}`}>
+                        {r.impact}
+                      </span>
+                    </div>
+                    <p className="font-black text-slate-900 text-lg mb-2">{r.risk}</p>
+                    <p className="text-xs text-slate-500 italic"><strong className="text-slate-800 uppercase not-italic">Mitigation:</strong> {r.mit}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'ops' && (
+            <div className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-slate-200">
+              <h3 className="text-xl font-black mb-10 flex items-center gap-3 uppercase tracking-widest underline decoration-blue-600 underline-offset-8">
+                Human Capital & Resource Readiness
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div className="p-6 bg-slate-900 text-white rounded-3xl shadow-xl">
+                  <p className="text-4xl font-black text-blue-400">10+</p>
+                  <p className="text-xs font-bold uppercase tracking-widest mt-2">Years Avg Experience</p>
+                </div>
+                <div className="p-6 bg-blue-600 text-white rounded-3xl shadow-xl">
+                  <p className="text-4xl font-black text-white">Zero</p>
+                  <p className="text-xs font-bold uppercase tracking-widest mt-2">LTI Incident Rate</p>
+                </div>
+                <div className="p-6 bg-emerald-500 text-white rounded-3xl shadow-xl">
+                  <p className="text-4xl font-black text-white">4</p>
+                  <p className="text-xs font-bold uppercase tracking-widest mt-2">Native Title Partners</p>
+                </div>
+              </div>
+              
+              <div className="overflow-hidden rounded-2xl border border-slate-100">
+                <table className="w-full text-left">
+                  <thead className="bg-slate-50 border-b border-slate-100">
+                    <tr>
+                      <th className="p-6 text-[10px] font-black uppercase text-slate-400">Expertise Profile</th>
+                      <th className="p-6 text-[10px] font-black uppercase text-slate-400">Core Competency</th>
+                      <th className="p-6 text-[10px] font-black uppercase text-slate-400 text-right">Proficiency</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50">
+                    {[
+                      { role: "Technical PM", skill: "JORC / Asset Management", level: 95 },
+                      { role: "Grid Engineer", skill: "BESS / Microgrid Architect", level: 90 },
+                      { role: "HSE Specialist", skill: "FIFO / WA Mining Regs", level: 85 },
+                      { role: "Analyst", skill: "Financial NPV Modelling", level: 98 },
+                    ].map((row, i) => (
+                      <tr key={i} className="hover:bg-slate-50/50 transition-colors group">
+                        <td className="p-6 font-black text-slate-900">{row.role}</td>
+                        <td className="p-6 text-slate-500 font-medium">{row.skill}</td>
+                        <td className="p-6 text-right">
+                          <div className="flex items-center justify-end gap-3">
+                            <div className="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
+                              <div className="h-full bg-blue-600 rounded-full" style={{ width: `${row.level}%` }}></div>
+                            </div>
+                            <span className="text-xs font-black text-slate-900">{row.level}%</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'status' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="bg-white p-10 rounded-[2.5rem] border border-slate-200">
+                <h3 className="text-xl font-black mb-10 flex items-center justify-between">
+                  <span>Weekly Milestone Tracker</span>
+                  <span className="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full uppercase font-black">Week 12</span>
+                </h3>
+                <div className="space-y-8 relative">
+                   <div className="absolute left-[11px] top-2 bottom-2 w-[2px] bg-slate-100"></div>
+                  {[
+                    { label: "Drone Terrain Mapping", status: "Completed", pct: 100 },
+                    { label: "Solar Substation Foundations", status: "Active", pct: 35 },
+                    { label: "AHS Fleet Software Retrofit", status: "Active", pct: 15 },
+                    { label: "HSE Pre-Mob Audit", status: "Queued", pct: 0 }
+                  ].map((task, i) => (
+                    <div key={i} className="flex gap-6 relative group">
+                      <div className={`w-6 h-6 rounded-full border-4 border-white shadow-md z-10 transition-colors duration-500 ${task.pct === 100 ? 'bg-emerald-500' : 'bg-blue-600'}`}></div>
+                      <div className="flex-1">
+                        <div className="flex justify-between items-end mb-2">
+                          <p className="font-black text-slate-800 uppercase text-xs tracking-wide">{task.label}</p>
+                          <p className="text-[10px] font-black text-blue-600">{task.pct}%</p>
+                        </div>
+                        <div className="w-full h-2 bg-slate-50 rounded-full overflow-hidden">
+                          <div className={`h-full transition-all duration-1000 ${task.pct === 100 ? 'bg-emerald-500' : 'bg-blue-600'}`} style={{ width: `${task.pct}%` }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-emerald-600 p-10 rounded-[2.5rem] shadow-xl text-white relative overflow-hidden group">
+                 <div className="absolute top-0 right-0 p-12 opacity-10 group-hover:scale-110 transition-transform duration-700">
+                  <Target size={180} />
+                </div>
+                <h3 className="text-2xl font-black italic uppercase tracking-widest mb-10">Final Handover Checklist</h3>
+                <div className="grid grid-cols-1 gap-4">
+                  {[
+                    "Performance Verification (120MW Peak Load)",
+                    "Mine Manager Operational Acceptance Signed",
+                    "Zero LTI Recognition Ceremony",
+                    "Lecciones Aprendidas / Post-Mortem Report",
+                    "Banjima Group Heritage Sign-off",
+                    "O&M (Operations & Maintenance) Asset Handover"
+                  ].map((check, i) => (
+                    <div key={i} className="flex items-center gap-4 bg-emerald-500/30 p-4 rounded-2xl border border-emerald-400/20 backdrop-blur-sm transition-transform hover:translate-x-2">
+                      <CheckCircle className="text-emerald-200 shrink-0" size={20} />
+                      <span className="text-sm font-black tracking-tight">{check}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <footer className="mt-20 pt-10 border-t border-slate-200 text-center opacity-40 group cursor-default">
+          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-400 group-hover:text-blue-600 transition-colors">
+            Interactive Project Dashboard | Prepared for Rio Tinto, BHP & Woodside Strategic Recruitment
+          </p>
+        </footer>
+      </main>
+    </div>
+  );
+};
+
+export default App;
