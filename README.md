@@ -1,4 +1,4 @@
-Dasboard Project  https://tauruscar.github.io/pilbara-green-iron/
+Dasboard Project  
 # pilbara-green-iron
 Pilbara Iron Strategic Decarbonization & Operational Excellence (PISDOE)
 Strategic Project Management Portfolio | Tier-1 Mining Asset Integration
