@@ -36,7 +36,7 @@
             -webkit-text-fill-color: transparent;
         }
         .glow-emerald {
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.15);
         }
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
@@ -45,21 +45,21 @@
         .sidebar-link.active {
             background: rgba(37, 99, 235, 0.2);
             color: #60a5fa;
-            border-right: 3px solid #2563eb;
+            border-right: 4px solid #2563eb;
         }
 
-        /* Responsive Design */
+        /* Responsive Logic */
         @media (max-width: 768px) {
             .ml-sidebar { margin-left: 0; }
             .sidebar { 
                 transform: translateX(-100%); 
                 transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-                width: 100%;
-                max-width: 280px;
+                width: 280px;
+                z-index: 100;
             }
             .sidebar.open { transform: translateX(0); }
-            .overlay { display: none; }
-            .overlay.active { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 55; }
+            .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90; }
+            .overlay.active { display: block; }
         }
         @media (min-width: 769px) {
             .ml-sidebar { margin-left: 14rem; }
@@ -70,10 +70,11 @@
 </head>
 <body class="min-h-screen">
 
+    <!-- Mobile Overlay -->
     <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
 
     <!-- Mobile Header -->
-    <header class="md:hidden flex items-center justify-between p-4 bg-slate-900 sticky top-0 z-50 border-b border-slate-800">
+    <header class="md:hidden flex items-center justify-between p-4 bg-slate-900 sticky top-0 z-[80] border-b border-white/5">
         <div class="flex items-center gap-2">
             <i data-lucide="zap" class="text-blue-500 w-6 h-6"></i>
             <span class="font-black italic text-xl tracking-tighter">PISDOE</span>
@@ -84,326 +85,395 @@
     </header>
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full bg-slate-900 border-r border-slate-800 z-[60] md:translate-x-0">
+    <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full bg-slate-900 border-r border-white/5 z-[100] md:translate-x-0">
         <div class="p-6">
             <div class="flex items-center gap-2 mb-1">
                 <i data-lucide="zap" class="text-blue-500 w-5 h-5"></i>
                 <span class="font-black italic text-xl tracking-tighter">PISDOE</span>
             </div>
-            <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Management Hub</p>
+            <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Management Suite</p>
         </div>
         
         <nav class="mt-4 px-2 space-y-1">
-            <button onclick="navigate('executive', this)" class="sidebar-link active w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-white">
+            <button onclick="navigate('executive', this)" class="sidebar-link active w-full flex items-center gap-3 px-4 py-4 text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-white">
                 <i data-lucide="layout" class="w-4 h-4"></i> Executive Summary
             </button>
-            <button onclick="navigate('financial', this)" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-white">
+            <button onclick="navigate('financial', this)" class="sidebar-link w-full flex items-center gap-3 px-4 py-4 text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-white">
                 <i data-lucide="dollar-sign" class="w-4 h-4"></i> Financials
             </button>
-            <button onclick="navigate('risk', this)" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-white">
+            <button onclick="navigate('risk', this)" class="sidebar-link w-full flex items-center gap-3 px-4 py-4 text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-white">
                 <i data-lucide="alert-triangle" class="w-4 h-4"></i> Risk Matrix
             </button>
-            <button onclick="navigate('operations', this)" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-white">
+            <button onclick="navigate('operations', this)" class="sidebar-link w-full flex items-center gap-3 px-4 py-4 text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-white">
                 <i data-lucide="users" class="w-4 h-4"></i> Operations
             </button>
-            <button onclick="navigate('milestones', this)" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-white">
+            <button onclick="navigate('milestones', this)" class="sidebar-link w-full flex items-center gap-3 px-4 py-4 text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-white">
                 <i data-lucide="check-circle" class="w-4 h-4"></i> Milestones
             </button>
         </nav>
     </aside>
 
     <!-- Main Content -->
-    <main class="ml-sidebar p-4 md:p-8 transition-all">
+    <main class="ml-sidebar p-5 md:p-10 transition-all">
         
         <!-- Dashboard Header -->
-        <div class="mb-8">
-            <div class="flex items-center gap-2 mb-2">
+        <div class="mb-10 animate-in">
+            <div class="flex items-center gap-2 mb-3">
                 <i data-lucide="globe" class="w-4 h-4 text-blue-500"></i>
                 <p class="text-[10px] font-bold uppercase tracking-widest text-blue-500">Western Australia | Pilbara Region</p>
             </div>
             
-            <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+            <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-8">
                 <div>
-                    <h1 class="text-3xl md:text-4xl font-bold leading-tight">Strategic Decarbonization</h1>
-                    <h2 class="text-3xl md:text-4xl font-black text-gradient italic">Dashboard</h2>
-                    <p class="text-sm text-slate-400 mt-2 max-w-lg">Integrating 120MW Solar/BESS Microgrid for Tier-1 Iron Ore Operations.</p>
+                    <h1 class="text-3xl md:text-5xl font-bold leading-tight tracking-tight">Strategic Decarbonization</h1>
+                    <h2 class="text-3xl md:text-5xl font-black text-gradient italic">Dashboard</h2>
+                    <p class="text-sm text-slate-400 mt-3 max-w-xl font-medium">Integrating 120MW Solar/BESS Microgrid for Tier-1 Iron Ore Operations.</p>
                 </div>
                 
-                <div class="flex gap-3">
-                    <div class="glass-card px-5 py-3 text-center min-w-[110px] flex-1 md:flex-none">
-                        <p class="text-[10px] text-slate-500 uppercase font-black">Project NPV</p>
-                        <p class="text-2xl font-bold text-white mt-1">$124M</p>
+                <div class="flex gap-4">
+                    <div class="glass-card px-6 py-4 text-center min-w-[120px] flex-1">
+                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Project NPV</p>
+                        <p class="text-2xl md:text-3xl font-black text-white mt-1">$124M</p>
                     </div>
-                    <div class="glass-card px-5 py-3 text-center glow-emerald border-blue-500/30 min-w-[110px] flex-1 md:flex-none">
-                        <p class="text-[10px] text-blue-500 uppercase font-black">Target IRR</p>
-                        <p class="text-2xl font-bold text-blue-500 mt-1">16.8%</p>
+                    <div class="glass-card px-6 py-4 text-center glow-emerald border-blue-500/30 min-w-[120px] flex-1">
+                        <p class="text-[10px] text-blue-500 uppercase font-black tracking-widest">Target IRR</p>
+                        <p class="text-2xl md:text-3xl font-black text-blue-500 mt-1">16.8%</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Section: Executive -->
-        <div id="executive" class="tab-content active space-y-6">
+        <!-- Section: Executive Summary -->
+        <div id="executive" class="tab-content active space-y-8">
             <div class="glass-card p-6 border-l-4 border-blue-600">
-                <div class="flex items-center gap-2 mb-3">
-                    <i data-lucide="target" class="w-4 h-4 text-blue-500"></i>
-                    <h3 class="text-sm font-semibold uppercase tracking-wider">JORC Compliance Baseline</h3>
+                <div class="flex items-center gap-2 mb-4">
+                    <i data-lucide="target" class="w-5 h-5 text-blue-500"></i>
+                    <h3 class="text-xs font-black uppercase tracking-[0.2em]">JORC Compliance Baseline</h3>
                 </div>
-                <p class="text-sm text-slate-400 leading-relaxed">
-                    Following <span class="text-white font-semibold text-xs">JORC Code 2012</span> standards, the project optimizes 250Mt of Proved Reserves at 61.5% Fe. By reducing diesel dependency by 45%, we achieve a direct <span class="text-white font-semibold">C1 Cash Cost reduction of $2.30/t</span>, securing long-term asset value.
+                <p class="text-sm text-slate-400 leading-relaxed max-w-4xl">
+                    Following <span class="text-white font-bold">JORC Code 2012</span> standards, the project optimizes 250Mt of Proved Reserves at 61.5% Fe. By reducing diesel dependency by 45%, we achieve a direct <span class="text-white font-bold">C1 Cash Cost reduction of $2.30/t</span>, securing long-term asset value and competitiveness.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="glass-card p-4 hover:border-blue-500/50 transition-all">
-                    <div class="flex justify-between items-start mb-2">
-                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-tighter">Energy Mix</p>
-                        <i data-lucide="leaf" class="w-4 h-4 text-emerald-500"></i>
+            <!-- KPI Row -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="glass-card p-5 hover:border-blue-500/50 transition-all group">
+                    <div class="flex justify-between items-start mb-3">
+                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Energy Mix</p>
+                        <i data-lucide="leaf" class="w-5 h-5 text-emerald-500"></i>
                     </div>
-                    <p class="text-xl font-bold">45% Green</p>
-                    <p class="text-[9px] text-slate-500 uppercase">Solar Displacement</p>
+                    <p class="text-2xl font-black text-white">45% Green</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase mt-1">Solar Displacement</p>
                 </div>
-                <div class="glass-card p-4">
-                    <div class="flex justify-between items-start mb-2">
-                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-tighter">Carbon Impact</p>
-                        <i data-lucide="flame" class="w-4 h-4 text-orange-500"></i>
+                <div class="glass-card p-5">
+                    <div class="flex justify-between items-start mb-3">
+                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Carbon Impact</p>
+                        <i data-lucide="flame" class="w-5 h-5 text-orange-500"></i>
                     </div>
-                    <p class="text-xl font-bold">-85k tCO2e</p>
-                    <p class="text-[9px] text-slate-500 uppercase">Annual Abatement</p>
+                    <p class="text-2xl font-black text-white">-85k tCO2e</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase mt-1">Annual Abatement</p>
                 </div>
-                <div class="glass-card p-4">
-                    <div class="flex justify-between items-start mb-2">
-                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-tighter">C1 Cash Cost</p>
-                        <i data-lucide="dollar-sign" class="w-4 h-4 text-blue-500"></i>
+                <div class="glass-card p-5">
+                    <div class="flex justify-between items-start mb-3">
+                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest">C1 Cash Cost</p>
+                        <i data-lucide="dollar-sign" class="w-5 h-5 text-blue-500"></i>
                     </div>
-                    <p class="text-xl font-bold">$28.40/t</p>
-                    <p class="text-[9px] text-slate-500 uppercase">↓ $2.30/t vs base</p>
+                    <p class="text-2xl font-black text-white">$28.40/t</p>
+                    <p class="text-[10px] text-emerald-500 font-bold uppercase mt-1">↓ $2.30/t vs base</p>
                 </div>
-                <div class="glass-card p-4">
-                    <p class="text-[10px] text-slate-500 uppercase font-black mb-2 tracking-tighter">Reserve Grade</p>
-                    <p class="text-xl font-bold">61.5% Fe</p>
-                    <p class="text-[9px] text-slate-500 uppercase">250Mt Reserves</p>
+                <div class="glass-card p-5">
+                    <div class="flex justify-between items-start mb-3">
+                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Reserve Grade</p>
+                        <i data-lucide="database" class="w-5 h-5 text-slate-400"></i>
+                    </div>
+                    <p class="text-2xl font-black text-white">61.5% Fe</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase mt-1">250Mt Reserves</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 glass-card p-6 min-h-[300px]">
-                    <h3 class="text-[10px] font-black uppercase mb-4 text-slate-500 tracking-widest">Cash Flow Projection ($M)</h3>
-                    <div class="h-64"><canvas id="cashFlowChart"></canvas></div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 glass-card p-8">
+                    <h3 class="text-[10px] font-black uppercase mb-6 text-slate-500 tracking-[0.2em]">Cash Flow Projection ($M)</h3>
+                    <div class="h-80"><canvas id="cashFlowChart"></canvas></div>
+                </div>
+                <div class="glass-card p-8">
+                    <h3 class="text-[10px] font-black uppercase mb-8 text-slate-500 tracking-[0.2em]">Strategic Pillars</h3>
+                    <div class="space-y-6">
+                        <div class="flex gap-4 items-center p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors cursor-default">
+                            <div class="w-10 h-10 rounded-xl bg-blue-600/20 flex items-center justify-center text-blue-500 font-black">01</div>
+                            <div>
+                                <p class="text-sm font-bold text-white uppercase tracking-tight">Solar PV Integration</p>
+                                <p class="text-[10px] text-slate-500 font-medium">120MW High-efficiency Array</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-center p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors cursor-default">
+                            <div class="w-10 h-10 rounded-xl bg-blue-600/20 flex items-center justify-center text-blue-500 font-black">02</div>
+                            <div>
+                                <p class="text-sm font-bold text-white uppercase tracking-tight">BESS Microgrid Hub</p>
+                                <p class="text-[10px] text-slate-500 font-medium">50MWh Load Balancing</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-center p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors cursor-default">
+                            <div class="w-10 h-10 rounded-xl bg-blue-600/20 flex items-center justify-center text-blue-500 font-black">03</div>
+                            <div>
+                                <p class="text-sm font-bold text-white uppercase tracking-tight">AHS Fleet Sync</p>
+                                <p class="text-[10px] text-slate-500 font-medium">Autonomous Electrified Transport</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Financial Analysis -->
+        <div id="financial" class="tab-content space-y-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="glass-card p-6 border-l-4 border-emerald-500">
+                    <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-2">Total CAPEX</p>
+                    <p class="text-3xl font-black text-white">$310M</p>
+                    <p class="text-[10px] text-emerald-500 font-bold uppercase mt-1 tracking-tight">Fully Funded Infrastructure</p>
                 </div>
                 <div class="glass-card p-6">
-                    <h3 class="text-[10px] font-black uppercase mb-4 text-slate-500 tracking-widest">Strategic Pillars</h3>
-                    <div class="space-y-4">
-                        <div class="flex gap-3 items-center p-3 bg-white/5 rounded-lg border border-white/5">
-                            <div class="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-500 font-bold">1</div>
-                            <span class="text-sm">Solar PV Integration</span>
-                        </div>
-                        <div class="flex gap-3 items-center p-3 bg-white/5 rounded-lg border border-white/5">
-                            <div class="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-500 font-bold">2</div>
-                            <span class="text-sm">BESS Microgrid Hub</span>
-                        </div>
-                        <div class="flex gap-3 items-center p-3 bg-white/5 rounded-lg border border-white/5">
-                            <div class="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-500 font-bold">3</div>
-                            <span class="text-sm">AHS Fleet Electrification</span>
-                        </div>
-                    </div>
+                    <p class="text-[10px] text-slate-500 uppercase font-black mb-2 tracking-widest">Payback Period</p>
+                    <p class="text-3xl font-black text-white">4.2 Yrs</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase mt-1 tracking-tight">From First Production</p>
+                </div>
+                <div class="glass-card p-6">
+                    <p class="text-[10px] text-slate-500 uppercase font-black mb-2 tracking-widest">EBITDA Margin</p>
+                    <p class="text-3xl font-black text-white">42%</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase mt-1 tracking-tight">Steady State Operations</p>
+                </div>
+                <div class="glass-card p-6">
+                    <p class="text-[10px] text-slate-500 uppercase font-black mb-2 tracking-widest">Debt/Equity</p>
+                    <p class="text-3xl font-black text-white">65/35</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase mt-1 tracking-tight">Project Finance Structure</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="glass-card p-8">
+                    <h3 class="text-[10px] font-black uppercase mb-8 text-slate-500 tracking-[0.2em]">Revenue Forecast ($M)</h3>
+                    <div class="h-72"><canvas id="revenueChart"></canvas></div>
+                </div>
+                <div class="glass-card p-8">
+                    <h3 class="text-[10px] font-black uppercase mb-8 text-slate-500 tracking-[0.2em]">CAPEX Allocation Breakdown</h3>
+                    <div class="h-72"><canvas id="capexChart"></canvas></div>
                 </div>
             </div>
         </div>
 
-        <!-- Section: Financial -->
-        <div id="financial" class="tab-content space-y-6">
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="glass-card p-4 border-l-2 border-emerald-500">
-                    <p class="text-[10px] text-slate-500 uppercase font-black mb-2">Total CAPEX</p>
-                    <p class="text-xl font-bold">$310M</p>
-                    <p class="text-[9px] text-emerald-500 font-bold uppercase">Fully Funded</p>
+        <!-- Section: Risk Landscape -->
+        <div id="risk" class="tab-content space-y-8 text-center">
+            <div class="glass-card p-10 max-w-4xl mx-auto">
+                <h3 class="text-[10px] font-black uppercase mb-10 text-slate-500 tracking-[0.3em]">Operational Risk Matrix (5x5 Impact vs Probability)</h3>
+                <div id="risk-matrix-container" class="grid grid-cols-5 gap-3 max-w-md mx-auto aspect-square">
+                    <!-- Matrix cells injected by JS -->
                 </div>
-                <div class="glass-card p-4">
-                    <p class="text-[10px] text-slate-500 uppercase font-black mb-2">Payback Period</p>
-                    <p class="text-xl font-bold">4.2 Yrs</p>
-                </div>
-                <div class="glass-card p-4">
-                    <p class="text-[10px] text-slate-500 uppercase font-black mb-2">EBITDA Margin</p>
-                    <p class="text-xl font-bold">42%</p>
-                </div>
-                <div class="glass-card p-4">
-                    <p class="text-[10px] text-slate-500 uppercase font-black mb-2">Debt/Equity</p>
-                    <p class="text-xl font-bold">65/35</p>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="glass-card p-6 min-h-[300px]">
-                    <h3 class="text-[10px] font-black uppercase mb-4 text-slate-500 tracking-widest">Revenue Forecast ($M)</h3>
-                    <div class="h-64"><canvas id="revenueChart"></canvas></div>
-                </div>
-                <div class="glass-card p-6 min-h-[300px]">
-                    <h3 class="text-[10px] font-black uppercase mb-4 text-slate-500 tracking-widest">CAPEX Breakdown</h3>
-                    <div class="h-64"><canvas id="capexChart"></canvas></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Section: Risk -->
-        <div id="risk" class="tab-content space-y-6">
-            <div class="glass-card p-6">
-                <h3 class="text-[10px] font-black uppercase mb-6 text-slate-500 tracking-widest text-center">Risk Matrix (Impact vs Probability)</h3>
-                <div id="risk-matrix-container" class="grid grid-cols-5 gap-2 max-w-sm mx-auto aspect-square">
-                    <!-- Matrix cells -->
-                </div>
-                <div class="flex justify-between max-w-sm mx-auto mt-4 text-[9px] font-black uppercase text-slate-500">
+                <div class="flex justify-between max-w-md mx-auto mt-6 text-[10px] font-black uppercase text-slate-500 tracking-tighter">
                     <span>Insignificant</span>
                     <span>Severe Impact</span>
                 </div>
             </div>
         </div>
 
-        <!-- Section: Operations -->
-        <div id="operations" class="tab-content space-y-6">
-            <div class="glass-card p-10 text-center">
-                <i data-lucide="hard-hat" class="w-10 h-10 text-blue-500 mx-auto mb-4"></i>
-                <h3 class="text-xl font-bold mb-2 uppercase tracking-wide">Operational Readiness</h3>
-                <p class="text-sm text-slate-400 max-w-md mx-auto leading-relaxed">System integration, workforce mobilization, and site infrastructure status for the 2026 commissioning.</p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 text-left">
-                    <div class="p-4 bg-white/5 rounded-xl border border-white/5">
-                        <p class="text-[10px] font-black text-blue-500 uppercase mb-1">Workforce</p>
-                        <p class="text-lg font-bold uppercase tracking-tighter">85% Ready</p>
+        <!-- Section: Operations Readiness -->
+        <div id="operations" class="tab-content space-y-8">
+            <div class="glass-card p-12 text-center relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-10 opacity-5">
+                    <i data-lucide="hard-hat" class="w-48 h-48"></i>
+                </div>
+                <i data-lucide="hard-hat" class="w-12 h-12 text-blue-500 mx-auto mb-6"></i>
+                <h3 class="text-2xl font-black mb-3 uppercase tracking-wider">Operational Readiness Status</h3>
+                <p class="text-sm text-slate-500 max-w-lg mx-auto leading-relaxed">System integration, workforce mobilization, and site infrastructure readiness for the Q4 2026 commissioning phase.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 text-left">
+                    <div class="p-6 bg-white/5 rounded-2xl border border-white/5">
+                        <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Workforce Readiness</p>
+                        <p class="text-2xl font-black uppercase tracking-tighter">85% Complete</p>
+                        <div class="w-full h-1.5 bg-slate-800 rounded-full mt-3"><div class="w-[85%] h-full bg-blue-600 rounded-full"></div></div>
                     </div>
-                    <div class="p-4 bg-white/5 rounded-xl border border-white/5">
-                        <p class="text-[10px] font-black text-blue-500 uppercase mb-1">Training</p>
-                        <p class="text-lg font-bold uppercase tracking-tighter">12 Sessions/mo</p>
+                    <div class="p-6 bg-white/5 rounded-2xl border border-white/5">
+                        <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Technical Training</p>
+                        <p class="text-2xl font-black uppercase tracking-tighter">12 Sessions/mo</p>
+                        <p class="text-[9px] text-slate-500 mt-2 font-bold italic uppercase">Ongoing Certification</p>
                     </div>
-                    <div class="p-4 bg-white/5 rounded-xl border border-white/5">
-                        <p class="text-[10px] font-black text-blue-500 uppercase mb-1">Grid Sync</p>
-                        <p class="text-lg font-bold uppercase tracking-tighter">Target Q4 2026</p>
+                    <div class="p-6 bg-white/5 rounded-2xl border border-white/5">
+                        <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Grid Sync Target</p>
+                        <p class="text-2xl font-black uppercase tracking-tighter">October 2026</p>
+                        <p class="text-[9px] text-emerald-500 mt-2 font-bold uppercase tracking-tight">On Track for Live Operations</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Section: Milestones -->
-        <div id="milestones" class="tab-content space-y-6">
-            <div class="glass-card p-8">
-                <h3 class="text-lg font-black mb-8 uppercase tracking-widest italic">Project Roadmap</h3>
-                <div class="space-y-8 border-l border-slate-800 ml-4 pl-8 relative">
-                    <div class="relative">
-                        <div class="absolute -left-[37px] top-1 w-3 h-3 rounded-full bg-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.5)]"></div>
-                        <p class="text-[10px] text-blue-500 font-black uppercase tracking-widest">Phase 1: Completed</p>
-                        <p class="font-bold text-sm">FEED Engineering & Site Terrain Mapping</p>
+        <!-- Section: Milestone Roadmap -->
+        <div id="milestones" class="tab-content space-y-8">
+            <div class="glass-card p-10">
+                <h3 class="text-xl font-black mb-12 italic uppercase tracking-widest underline decoration-blue-600 underline-offset-8">Project Roadmap & Execution</h3>
+                <div class="space-y-12 border-l-2 border-slate-800 ml-5 pl-12 relative">
+                    <div class="relative group">
+                        <div class="absolute -left-[54px] top-1.5 w-4 h-4 rounded-full bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.6)]"></div>
+                        <p class="text-[10px] text-blue-500 font-black uppercase tracking-widest mb-1">Phase 1: Successfully Completed</p>
+                        <p class="font-black text-lg text-white">FEED Engineering & Site Terrain Mapping</p>
+                        <p class="text-xs text-slate-500 mt-1">Finalized LiDAR mapping and geotechnical reports for solar arrays.</p>
                     </div>
-                    <div class="relative">
-                        <div class="absolute -left-[37px] top-1 w-3 h-3 rounded-full bg-slate-600"></div>
-                        <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest">Phase 2: In Progress</p>
-                        <p class="font-bold text-sm">BESS Procurement & Civil Foundations</p>
+                    <div class="relative group">
+                        <div class="absolute -left-[54px] top-1.5 w-4 h-4 rounded-full bg-blue-400"></div>
+                        <p class="text-[10px] text-blue-400 font-black uppercase tracking-widest mb-1">Phase 2: In Progress (Active)</p>
+                        <p class="font-black text-lg text-white">BESS Procurement & Civil Foundations</p>
+                        <p class="text-xs text-slate-500 mt-1">Foundation pouring for the substation and Battery Hub underway.</p>
                     </div>
-                    <div class="relative opacity-40">
-                        <div class="absolute -left-[37px] top-1 w-3 h-3 rounded-full bg-slate-700"></div>
-                        <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest">Phase 3: Upcoming</p>
-                        <p class="font-bold text-sm">Full Microgrid Commissioning & AHS Sync</p>
+                    <div class="relative opacity-30">
+                        <div class="absolute -left-[54px] top-1.5 w-4 h-4 rounded-full bg-slate-700"></div>
+                        <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Phase 3: Upcoming Milestone</p>
+                        <p class="font-black text-lg text-slate-400">Full Microgrid Commissioning & AHS Sync</p>
+                        <p class="text-xs text-slate-500 mt-1">Deployment of autonomous vehicle charging software.</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Footer -->
-        <footer class="mt-16 text-center pb-8 opacity-40">
-            <p class="text-[8px] font-black uppercase tracking-[0.4em] text-slate-500">
-                Strategic Dashboard | Prepared for Rio Tinto, BHP & Woodside Recruitment
+        <div class="mt-20 text-center pb-10 opacity-30">
+            <p class="text-[9px] font-black uppercase tracking-[0.5em] text-slate-500">
+                Strategic Digital Portfolio | Designed for Rio Tinto, BHP & Woodside Technical Recruitment
             </p>
-        </footer>
+        </div>
     </main>
 
     <script>
+        // Initialize Icons
         lucide.createIcons();
 
+        // Mobile Sidebar Functionality
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
+            const menuIcon = document.getElementById('menu-icon');
+            
             sidebar.classList.toggle('open');
             overlay.classList.toggle('active');
+            
+            // Toggle between menu and x icon (optional logic here)
         }
 
+        // Navigation Handler
         function navigate(sectionId, btn) {
+            // Switch tabs
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.getElementById(sectionId).classList.add('active');
             
+            // Update sidebar buttons
             document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
             btn.classList.add('active');
 
+            // Close sidebar on mobile
             if(window.innerWidth <= 768) {
                 toggleSidebar();
             }
+
+            // Scroll to top of content
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // --- CHARTS INITIALIZATION ---
         window.onload = function() {
+            const chartFont = { size: 9, family: "'Inter', sans-serif", weight: '900' };
             const commonOptions = {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#64748b', font: { size: 9, weight: '900' } } } },
+                plugins: { 
+                    legend: { 
+                        display: true, 
+                        position: 'top', 
+                        labels: { color: '#64748b', font: chartFont, usePointStyle: true, boxWidth: 6 } 
+                    } 
+                },
                 scales: {
-                    x: { ticks: { color: '#64748b', font: { size: 9 } }, grid: { display: false } },
-                    y: { ticks: { color: '#64748b', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                    x: { ticks: { color: '#64748b', font: { size: 9, weight: '700' } }, grid: { display: false } },
+                    y: { ticks: { color: '#64748b', font: { size: 9, weight: '700' } }, grid: { color: 'rgba(255,255,255,0.03)' } }
                 }
             };
 
-            // Cash Flow
+            // 1. Cash Flow Chart
             new Chart(document.getElementById('cashFlowChart'), {
                 type: 'line',
                 data: {
                     labels: ['Yr 0', 'Yr 1', 'Yr 2', 'Yr 3', 'Yr 4', 'Yr 5', 'Yr 6'],
                     datasets: [{
-                        label: 'Cash Flow ($M)',
+                        label: 'Cash Flow Projection ($M)',
                         data: [-310, -250, -180, -90, -20, 50, 130],
                         borderColor: '#2563eb',
-                        borderWidth: 2,
+                        borderWidth: 3,
                         tension: 0.4,
                         fill: true,
-                        backgroundColor: 'rgba(37, 99, 235, 0.05)'
+                        backgroundColor: 'rgba(37, 99, 235, 0.05)',
+                        pointBackgroundColor: '#2563eb',
+                        pointRadius: 4
                     }]
                 },
                 options: commonOptions
             });
 
-            // Revenue
+            // 2. Revenue Chart
             new Chart(document.getElementById('revenueChart'), {
                 type: 'bar',
                 data: {
                     labels: ['2025', '2026', '2027', '2028', '2029'],
                     datasets: [{
-                        label: 'Revenue ($M)',
+                        label: 'Gross Revenue Target ($M)',
                         data: [45, 120, 240, 280, 310],
-                        backgroundColor: '#3b82f6'
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 8,
+                        hoverBackgroundColor: '#2563eb'
                     }]
                 },
                 options: commonOptions
             });
 
-            // Capex
+            // 3. Capex Chart
             new Chart(document.getElementById('capexChart'), {
                 type: 'doughnut',
                 data: {
-                    labels: ['Solar', 'BESS', 'Infra', 'Labour'],
+                    labels: ['Solar PV', 'BESS', 'Infrastructure', 'Mobile Fleet Sync'],
                     datasets: [{
                         data: [140, 90, 50, 30],
                         backgroundColor: ['#2563eb', '#60a5fa', '#1e293b', '#64748b'],
-                        borderWidth: 0
+                        borderWidth: 0,
+                        hoverOffset: 15
                     }]
                 },
-                options: { ...commonOptions, scales: undefined }
+                options: { 
+                    ...commonOptions, 
+                    scales: undefined,
+                    plugins: { 
+                        legend: { position: 'right', labels: { color: '#cbd5e1', font: chartFont } } 
+                    }
+                }
             });
 
-            // Risk Matrix
+            // --- RISK MATRIX GENERATION ---
             const matrix = document.getElementById('risk-matrix-container');
-            for(let i=0; i<25; i++) {
+            const cells = 25;
+            for(let i=0; i<cells; i++) {
                 const cell = document.createElement('div');
                 const row = Math.floor(i/5);
                 const col = i % 5;
-                let color = "bg-slate-800/50";
+                
+                // Risk Color Logic (Lower left green, Upper right red)
+                let color = "bg-slate-800/50"; // Default
                 if(row + col >= 6) color = "bg-rose-500/80";
                 else if(row + col >= 4) color = "bg-orange-500/60";
                 else if(row + col >= 2) color = "bg-blue-500/40";
-                cell.className = `${color} rounded-sm transition-all hover:scale-110`;
-                if(i === 3) cell.innerHTML = "<div class='w-1 h-1 bg-white rounded-full mx-auto mt-[40%] animate-pulse shadow-lg'></div>";
+                
+                cell.className = `${color} rounded-md transition-all duration-300 hover:scale-110 cursor-pointer flex items-center justify-center border border-white/5`;
+                
+                // Add "active risk" dots on specific cells
+                if(i === 3 || i === 8 || i === 14) {
+                    const dot = document.createElement('div');
+                    dot.className = "w-2 h-2 bg-white rounded-full animate-pulse shadow-[0_0_10px_rgba(255,255,255,0.8)]";
+                    cell.appendChild(dot);
+                }
+                
                 matrix.appendChild(cell);
             }
         }
