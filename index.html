@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PISDOE | Strategic Asset Management Dashboard</title>
+    <title>PISDOE | Tier-1 Strategic Green Dashboard</title>
     <!-- Framework e Librerie -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -12,57 +12,57 @@
     
     <style>
         :root {
-            --primary: #3b82f6;
-            --background: #020617;
-            --surface: #0f172a;
-            --glass: rgba(15, 23, 42, 0.8);
-            --border: rgba(255, 255, 255, 0.08);
+            --primary: #10b981; /* Verde Smeraldo per accenti "Green" */
+            --background: #000000; /* Fondo Nero Assoluto */
+            --surface: #0a0a0a;
+            --glass: rgba(10, 10, 10, 0.85);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
         }
         body { 
             font-family: 'Inter', sans-serif; 
             background-color: var(--background);
-            color: #f8fafc;
+            color: var(--text-main);
             overflow-x: hidden;
         }
-        /* Stile per card con effetto vetro professionale */
+        /* Card con stile "Dark Premium" */
         .glass-card {
             background: var(--glass);
-            backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: 1.25rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
         }
         .glass-card:hover {
-            border-color: rgba(59, 130, 246, 0.3);
-            box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.5);
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.1);
         }
-        .text-gradient {
-            background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .text-accent {
+            color: var(--primary);
         }
-        /* Gestione stati delle schede */
+        /* Gestione tab */
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: slideUp 0.5s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-content.active { display: block; animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
         .sidebar-link.active {
-            background: linear-gradient(to right, rgba(37, 99, 235, 0.15), transparent);
-            color: #60a5fa;
-            border-left: 4px solid #2563eb;
+            color: var(--primary);
+            background: rgba(16, 185, 129, 0.05);
+            border-right: 4px solid var(--primary);
         }
 
-        /* Ottimizzazione Mobile */
+        /* Navigazione Mobile */
         @media (max-width: 768px) {
             .ml-sidebar { margin-left: 0; }
             .sidebar { 
                 transform: translateX(-100%); 
-                transition: transform 0.4s ease; 
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
                 width: 280px;
                 z-index: 100;
             }
             .sidebar.open { transform: translateX(0); }
-            .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 90; }
+            .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 90; }
             .overlay.active { display: block; }
         }
         @media (min-width: 769px) {
@@ -70,221 +70,214 @@
             .sidebar { width: 16rem; }
         }
 
-        /* Scrollbar personalizzata */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #020617; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        /* Scrollbar Stealth */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
 </head>
 <body class="min-h-screen">
 
     <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
 
-    <!-- Header Mobile per navigazione rapida -->
-    <header class="md:hidden flex items-center justify-between p-5 bg-slate-950 sticky top-0 z-[80] border-b border-white/5">
+    <!-- Header Mobile -->
+    <header class="md:hidden flex items-center justify-between p-5 bg-black sticky top-0 z-[80] border-b border-white/10">
         <div class="flex items-center gap-2">
-            <i data-lucide="zap" class="text-blue-500 w-6 h-6"></i>
+            <i data-lucide="zap" class="text-emerald-500 w-6 h-6"></i>
             <span class="font-black italic text-xl tracking-tighter uppercase">Pisdoe</span>
         </div>
-        <button onclick="toggleSidebar()" class="p-2 text-slate-400 bg-white/5 rounded-lg">
+        <button onclick="toggleSidebar()" class="p-2 text-white bg-white/5 rounded-lg">
             <i data-lucide="menu" id="menu-icon"></i>
         </button>
     </header>
 
-    <!-- Sidebar fissa per Desktop -->
-    <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full bg-slate-950 border-r border-white/5 z-[100] md:translate-x-0 transition-transform">
-        <div class="p-8">
-            <div class="flex items-center gap-3 mb-1">
-                <div class="bg-blue-600 p-1.5 rounded-lg shadow-lg shadow-blue-900/20">
+    <!-- Sidebar Executive -->
+    <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full bg-black border-r border-white/10 z-[100] md:translate-x-0 transition-transform">
+        <div class="p-8 text-center md:text-left">
+            <div class="flex items-center gap-3 mb-1 justify-center md:justify-start">
+                <div class="bg-emerald-600 p-1.5 rounded-lg shadow-lg shadow-emerald-900/40">
                     <i data-lucide="zap" class="text-white w-5 h-5"></i>
                 </div>
-                <span class="font-black italic text-2xl tracking-tighter uppercase">Pisdoe</span>
+                <span class="font-black italic text-2xl tracking-tighter uppercase text-white">Pisdoe</span>
             </div>
-            <p class="text-[9px] text-slate-500 uppercase font-black tracking-[0.3em] mt-2">Executive Suite v2.1</p>
+            <p class="text-[9px] text-slate-500 uppercase font-black tracking-[0.4em] mt-3">Green Iron Operations</p>
         </div>
         
-        <nav class="mt-4 px-4 space-y-2">
-            <button onclick="navigate('executive', this)" class="sidebar-link active w-full flex items-center gap-3 px-4 py-4 text-xs font-bold uppercase tracking-widest transition-all text-slate-400 hover:text-white rounded-xl hover:bg-white/5">
+        <nav class="mt-6 px-4 space-y-2">
+            <button onclick="navigate('executive', this)" class="sidebar-link active w-full flex items-center gap-3 px-5 py-4 text-xs font-bold uppercase tracking-[0.2em] transition-all text-slate-400 hover:text-white rounded-xl">
                 <i data-lucide="layout" class="w-4 h-4"></i> Overview
             </button>
-            <button onclick="navigate('financial', this)" class="sidebar-link w-full flex items-center gap-3 px-4 py-4 text-xs font-bold uppercase tracking-widest transition-all text-slate-400 hover:text-white rounded-xl hover:bg-white/5">
+            <button onclick="navigate('financial', this)" class="sidebar-link w-full flex items-center gap-3 px-5 py-4 text-xs font-bold uppercase tracking-[0.2em] transition-all text-slate-400 hover:text-white rounded-xl">
                 <i data-lucide="dollar-sign" class="w-4 h-4"></i> Financials
             </button>
-            <button onclick="navigate('risk', this)" class="sidebar-link w-full flex items-center gap-3 px-4 py-4 text-xs font-bold uppercase tracking-widest transition-all text-slate-400 hover:text-white rounded-xl hover:bg-white/5">
-                <i data-lucide="alert-triangle" class="w-4 h-4"></i> Risk Matrix
+            <button onclick="navigate('risk', this)" class="sidebar-link w-full flex items-center gap-3 px-5 py-4 text-xs font-bold uppercase tracking-[0.2em] transition-all text-slate-400 hover:text-white rounded-xl">
+                <i data-lucide="alert-triangle" class="w-4 h-4"></i> Risks
             </button>
-            <button onclick="navigate('operations', this)" class="sidebar-link w-full flex items-center gap-3 px-4 py-4 text-xs font-bold uppercase tracking-widest transition-all text-slate-400 hover:text-white rounded-xl hover:bg-white/5">
+            <button onclick="navigate('operations', this)" class="sidebar-link w-full flex items-center gap-3 px-5 py-4 text-xs font-bold uppercase tracking-[0.2em] transition-all text-slate-400 hover:text-white rounded-xl">
                 <i data-lucide="users" class="w-4 h-4"></i> Readiness
             </button>
-            <button onclick="navigate('milestones', this)" class="sidebar-link w-full flex items-center gap-3 px-4 py-4 text-xs font-bold uppercase tracking-widest transition-all text-slate-400 hover:text-white rounded-xl hover:bg-white/5">
+            <button onclick="navigate('milestones', this)" class="sidebar-link w-full flex items-center gap-3 px-5 py-4 text-xs font-bold uppercase tracking-[0.2em] transition-all text-slate-400 hover:text-white rounded-xl">
                 <i data-lucide="check-circle" class="w-4 h-4"></i> Roadmap
             </button>
         </nav>
 
-        <div class="absolute bottom-8 left-8 right-8">
-            <div class="p-4 rounded-2xl bg-white/5 border border-white/5">
-                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Status</p>
+        <div class="absolute bottom-10 left-8 right-8">
+            <div class="p-5 rounded-2xl bg-white/5 border border-white/10">
+                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Current Milestone</p>
                 <div class="flex items-center gap-2">
                     <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                    <span class="text-[10px] font-bold text-emerald-500 uppercase">Live: On Track</span>
+                    <span class="text-[10px] font-black text-white uppercase tracking-wider">Phase 2: Execution</span>
                 </div>
             </div>
         </div>
     </aside>
 
-    <!-- Area Principale -->
+    <!-- Main View Area -->
     <main class="ml-sidebar p-6 md:p-12 transition-all">
         
-        <!-- Header con Titoli di Alto Livello -->
-        <div class="mb-12 animate-in">
-            <div class="flex items-center gap-2 mb-4">
-                <i data-lucide="globe" class="w-4 h-4 text-blue-500"></i>
-                <p class="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500">Western Australia | Tier-1 Asset Infrastructure</p>
+        <!-- Senior Header Section -->
+        <div class="mb-16 animate-in">
+            <div class="flex items-center gap-2 mb-5">
+                <i data-lucide="globe" class="w-4 h-4 text-emerald-500"></i>
+                <p class="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-500">Tier-1 Resource Asset | Pilbara WA</p>
             </div>
             
-            <div class="flex flex-col xl:flex-row xl:items-end justify-between gap-10">
-                <div class="max-w-3xl">
-                    <h1 class="text-4xl md:text-6xl font-black leading-[0.9] tracking-tighter text-white mb-2 uppercase">
+            <div class="flex flex-col xl:flex-row xl:items-end justify-between gap-12">
+                <div class="max-w-4xl">
+                    <h1 class="text-5xl md:text-8xl font-black leading-[0.85] tracking-tighter text-white mb-6 uppercase">
                         Strategic <br/>Decarbonization
                     </h1>
-                    <h2 class="text-3xl md:text-5xl font-black text-gradient italic mb-4">Integrative Dashboard</h2>
-                    <p class="text-slate-400 text-base md:text-lg font-medium leading-relaxed">
-                        A data-driven transition model for the 120MW Solar/BESS Microgrid integration across Pilbara Iron Ore operations.
+                    <p class="text-slate-400 text-lg md:text-xl font-medium leading-relaxed max-w-2xl border-l-2 border-emerald-500 pl-6">
+                        Optimizing iron ore logistics through 120MW hybrid energy integration and autonomous fleet electrification.
                     </p>
                 </div>
                 
-                <div class="flex gap-4">
-                    <div class="glass-card px-8 py-6 text-center min-w-[140px] flex-1 md:flex-none border-t-4 border-t-blue-600">
-                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1">Project NPV</p>
-                        <p class="text-3xl font-black text-white">$124.2M</p>
+                <div class="flex gap-6">
+                    <div class="glass-card px-10 py-8 text-center min-w-[160px] border-b-4 border-b-emerald-600">
+                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-[0.2em] mb-2">Project NPV</p>
+                        <p class="text-4xl font-black text-white">$124.2M</p>
                     </div>
-                    <div class="glass-card px-8 py-6 text-center glow-emerald border-t-4 border-t-blue-400 min-w-[140px] flex-1 md:flex-none">
-                        <p class="text-[10px] text-blue-500 uppercase font-black tracking-widest mb-1">Target IRR</p>
-                        <p class="text-3xl font-black text-blue-500">16.8%</p>
+                    <div class="glass-card px-10 py-8 text-center border-b-4 border-b-emerald-400">
+                        <p class="text-[10px] text-emerald-500 uppercase font-black tracking-[0.2em] mb-2">Target IRR</p>
+                        <p class="text-4xl font-black text-white">16.8%</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- SEZIONE: EXECUTIVE OVERVIEW -->
-        <div id="executive" class="tab-content active space-y-10">
+        <!-- TAB: EXECUTIVE OVERVIEW -->
+        <div id="executive" class="tab-content active space-y-12">
             
-            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
-                <!-- Project Narrative: Sostituisce le immagini con testo senior -->
-                <div class="xl:col-span-2 space-y-8">
-                    <div class="glass-card p-10 bg-gradient-to-br from-slate-900 to-slate-950">
-                        <h3 class="text-xs font-black uppercase tracking-[0.3em] text-blue-500 mb-6 flex items-center gap-3">
-                            <span class="w-8 h-[1px] bg-blue-500"></span> Strategic Narrative
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-10">
+                <div class="xl:col-span-2 space-y-10">
+                    <!-- Project Vision Block -->
+                    <div class="glass-card p-12 bg-zinc-950 border-white/5">
+                        <h3 class="text-xs font-black uppercase tracking-[0.4em] text-emerald-500 mb-8 flex items-center gap-4">
+                            <span class="w-12 h-[2px] bg-emerald-500"></span> Executive Narrative
                         </h3>
-                        <div class="space-y-6 text-slate-300 leading-relaxed text-base md:text-lg">
+                        <div class="space-y-8 text-slate-200 leading-relaxed text-lg">
                             <p>
-                                The <span class="text-white font-bold tracking-tight">Pilbara Integrated Strategy for Decarbonization & Operational Excellence (PISDOE)</span> represents a cornerstone shift in Tier-1 asset management. By replacing aging diesel generation with a hybrid 120MW solar-to-battery configuration, we are not just reducing carbon; we are shielding the asset from global fuel volatility.
+                                The <span class="text-emerald-400 font-bold tracking-tight">PISDOE Initiative</span> is the definitive roadmap for decarbonizing high-output assets in the Hamersley Basin. By decoupling energy costs from diesel volatility, we secure a <span class="text-white font-bold">$2.30/tonne C1 cost advantage</span> over non-electrified peers.
                             </p>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-                                <div class="space-y-2">
-                                    <h4 class="text-white font-bold flex items-center gap-2">
-                                        <i data-lucide="shield-check" class="w-4 h-4 text-blue-500"></i> Operational Security
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 pt-6">
+                                <div class="space-y-3">
+                                    <h4 class="text-white font-black uppercase text-sm tracking-widest flex items-center gap-3">
+                                        <i data-lucide="zap" class="w-5 h-5 text-emerald-500"></i> Energy Stability
                                     </h4>
-                                    <p class="text-sm text-slate-500 italic">Redundant power systems designed for Wind Region D (AS1170.2) ensure 99.9% uptime for the Autonomous Haulage Systems (AHS).</p>
+                                    <p class="text-sm text-slate-500 leading-relaxed italic">Utilizing 50MWh BESS for frequency control and solar load shifting, ensuring 24/7 reliability for autonomous operations.</p>
                                 </div>
-                                <div class="space-y-2">
-                                    <h4 class="text-white font-bold flex items-center gap-2">
-                                        <i data-lucide="trending-down" class="w-4 h-4 text-blue-500"></i> Margin Protection
+                                <div class="space-y-3">
+                                    <h4 class="text-white font-black uppercase text-sm tracking-widest flex items-center gap-3">
+                                        <i data-lucide="leaf" class="w-5 h-5 text-emerald-500"></i> ESG Leadership
                                     </h4>
-                                    <p class="text-sm text-slate-500 italic">A projected 45% reduction in Scope 1 emissions directly correlates to a $2.30/tonne decrease in the C1 Cash Cost baseline.</p>
+                                    <p class="text-sm text-slate-500 leading-relaxed italic">Reducing Scope 1 emissions by 85k tonnes annually, positioning the asset as a leader in "Green Iron" production.</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div class="glass-card p-8 group">
-                            <div class="flex justify-between items-start mb-6">
-                                <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Compliance Standard</p>
-                                <i data-lucide="award" class="w-5 h-5 text-blue-500"></i>
+                    <!-- KPI Feature Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                        <div class="glass-card p-10 group">
+                            <div class="flex justify-between items-start mb-8">
+                                <p class="text-[10px] text-slate-500 uppercase font-black tracking-[0.3em]">Compliance</p>
+                                <i data-lucide="shield" class="w-6 h-6 text-emerald-500"></i>
                             </div>
-                            <h4 class="text-2xl font-black text-white mb-2">JORC 2012</h4>
-                            <p class="text-xs text-slate-500 leading-relaxed uppercase tracking-wider font-bold">Reserves optimized at 61.5% Fe average grade</p>
+                            <h4 class="text-3xl font-black text-white mb-2 uppercase italic tracking-tighter">JORC 2012</h4>
+                            <p class="text-xs text-emerald-500 uppercase tracking-[0.2em] font-black">Reserve Grade: 61.5% Fe</p>
                         </div>
-                        <div class="glass-card p-8 group">
-                            <div class="flex justify-between items-start mb-6">
-                                <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Energy Capacity</p>
-                                <i data-lucide="battery-charging" class="w-5 h-5 text-emerald-500"></i>
+                        <div class="glass-card p-10 group">
+                            <div class="flex justify-between items-start mb-8">
+                                <p class="text-[10px] text-slate-500 uppercase font-black tracking-[0.3em]">Emissions</p>
+                                <i data-lucide="cloud-off" class="w-6 h-6 text-emerald-500"></i>
                             </div>
-                            <h4 class="text-2xl font-black text-white mb-2">120MW / 50MWh</h4>
-                            <p class="text-xs text-slate-500 leading-relaxed uppercase tracking-wider font-bold">Hybrid PV-BESS Microgrid Configuration</p>
+                            <h4 class="text-3xl font-black text-white mb-2 uppercase italic tracking-tighter">45% Abatement</h4>
+                            <p class="text-xs text-emerald-500 uppercase tracking-[0.2em] font-black">Net Zero Alignment Phase 1</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Strategic Summary Table -->
-                <div class="space-y-8">
-                    <div class="glass-card p-8 border-l-4 border-blue-600">
-                        <h3 class="text-[10px] font-black uppercase mb-8 text-slate-500 tracking-widest">Key Performance Focus</h3>
-                        <div class="space-y-8">
-                            <div class="flex justify-between items-end border-b border-white/5 pb-4">
+                <!-- Strategic Summary Sidebar -->
+                <div class="space-y-10">
+                    <div class="glass-card p-10 border-t-8 border-t-emerald-600 bg-zinc-950">
+                        <h3 class="text-[10px] font-black uppercase mb-10 text-slate-500 tracking-[0.3em] text-center">Executive Metrics</h3>
+                        <div class="space-y-10">
+                            <div class="flex justify-between items-end border-b border-white/10 pb-6">
                                 <div>
-                                    <p class="text-[10px] font-black text-blue-500 uppercase tracking-tight">C1 Cash Cost</p>
-                                    <p class="text-xl font-bold text-white tracking-tighter">$28.40/t</p>
+                                    <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1">C1 Cash Cost</p>
+                                    <p class="text-3xl font-black text-white tracking-tighter">$28.40/t</p>
                                 </div>
-                                <span class="text-[10px] font-bold text-emerald-500">↓ 7.5% YoY</span>
+                                <span class="text-[11px] font-black text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded">Target Achieved</span>
                             </div>
-                            <div class="flex justify-between items-end border-b border-white/5 pb-4">
+                            <div class="flex justify-between items-end border-b border-white/10 pb-6">
                                 <div>
-                                    <p class="text-[10px] font-black text-blue-500 uppercase tracking-tight">Annual CO2 Abatement</p>
-                                    <p class="text-xl font-bold text-white tracking-tighter">85,400t</p>
+                                    <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1">Payback Period</p>
+                                    <p class="text-3xl font-black text-white tracking-tighter">4.2 Years</p>
                                 </div>
-                                <span class="text-[10px] font-bold text-blue-400">Carbon Credits Eligible</span>
-                            </div>
-                            <div class="flex justify-between items-end border-b border-white/5 pb-4">
-                                <div>
-                                    <p class="text-[10px] font-black text-blue-500 uppercase tracking-tight">Payback Period</p>
-                                    <p class="text-xl font-bold text-white tracking-tighter">4.2 Years</p>
-                                </div>
-                                <span class="text-[10px] font-bold text-slate-500 italic">Tier-1 Efficiency</span>
+                                <span class="text-[11px] font-bold text-slate-500 italic">Tier-1 CapEx</span>
                             </div>
                         </div>
-                        <button class="w-full mt-10 py-5 bg-blue-600 text-white rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-blue-900/30 hover:bg-blue-500 transition-all flex items-center justify-center gap-2">
-                            <i data-lucide="file-text" class="w-4 h-4"></i> Download Full Strategy Brief
+                        <button class="w-full mt-12 py-5 bg-white text-black rounded-lg font-black text-[10px] uppercase tracking-[0.3em] hover:bg-emerald-500 hover:text-white transition-all shadow-2xl flex items-center justify-center gap-3 group">
+                            <i data-lucide="file-check" class="w-4 h-4 group-hover:scale-125 transition-transform"></i> Technical Prospectus
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Dashboard Charts Area -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="glass-card p-8">
-                    <h3 class="text-[10px] font-black uppercase mb-10 text-slate-500 tracking-[0.3em]">Project Cash Flow Trajectory ($M)</h3>
-                    <div class="h-[340px]"><canvas id="cashFlowChart"></canvas></div>
+            <!-- Visualization Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <div class="glass-card p-10 bg-zinc-950">
+                    <h3 class="text-[10px] font-black uppercase mb-10 text-slate-500 tracking-[0.4em]">Equity & Cash Flow Baseline ($M)</h3>
+                    <div class="h-[380px]"><canvas id="cashFlowChart"></canvas></div>
                 </div>
-                <div class="glass-card p-8">
-                    <h3 class="text-[10px] font-black uppercase mb-10 text-slate-500 tracking-[0.3em]">Operational Readiness Index</h3>
-                    <div class="space-y-10">
+                <div class="glass-card p-10 bg-zinc-950">
+                    <h3 class="text-[10px] font-black uppercase mb-12 text-slate-500 tracking-[0.4em]">Asset Integration Readiness</h3>
+                    <div class="space-y-12">
                         <div>
-                            <div class="flex justify-between mb-2">
-                                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Workforce Mobilization</span>
-                                <span class="text-xs font-black text-white">85%</span>
+                            <div class="flex justify-between mb-4">
+                                <span class="text-xs font-black uppercase tracking-[0.2em] text-white">Workforce Mobilization</span>
+                                <span class="text-xs font-black text-emerald-500">85%</span>
                             </div>
-                            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                                <div class="h-full bg-blue-600 rounded-full" style="width: 85%"></div>
+                            <div class="w-full h-1 bg-zinc-900 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]" style="width: 85%"></div>
                             </div>
                         </div>
                         <div>
-                            <div class="flex justify-between mb-2">
-                                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Infrastructure Foundations</span>
-                                <span class="text-xs font-black text-white">42%</span>
+                            <div class="flex justify-between mb-4">
+                                <span class="text-xs font-black uppercase tracking-[0.2em] text-white">Grid Foundations</span>
+                                <span class="text-xs font-black text-emerald-500">42%</span>
                             </div>
-                            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                                <div class="h-full bg-emerald-500 rounded-full" style="width: 42%"></div>
+                            <div class="w-full h-1 bg-zinc-900 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-400" style="width: 42%"></div>
                             </div>
                         </div>
                         <div>
-                            <div class="flex justify-between mb-2">
-                                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Fleet AHS Integration</span>
-                                <span class="text-xs font-black text-white">15%</span>
+                            <div class="flex justify-between mb-4">
+                                <span class="text-xs font-black uppercase tracking-[0.2em] text-white">Autonomous Sync</span>
+                                <span class="text-xs font-black text-emerald-500">15%</span>
                             </div>
-                            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                                <div class="h-full bg-orange-500 rounded-full" style="width: 15%"></div>
+                            <div class="w-full h-1 bg-zinc-900 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-300" style="width: 15%"></div>
                             </div>
                         </div>
                     </div>
@@ -292,97 +285,65 @@
             </div>
         </div>
 
-        <!-- SCHEDA: FINANCIAL ANALYSIS -->
-        <div id="financial" class="tab-content space-y-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="glass-card p-10">
-                    <h3 class="text-[10px] font-black uppercase mb-10 text-slate-500 tracking-[0.2em]">Annual Revenue Forecast ($M)</h3>
+        <!-- SCHEDA: FINANCIALS (TUTTO IN INGLESE) -->
+        <div id="financial" class="tab-content space-y-12">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <div class="glass-card p-12">
+                    <h3 class="text-[10px] font-black uppercase mb-12 text-slate-500 tracking-[0.4em]">Project Revenue Forecast ($M)</h3>
                     <div class="h-80"><canvas id="revenueChart"></canvas></div>
                 </div>
-                <div class="glass-card p-10 text-center flex flex-col justify-center">
-                    <div class="bg-blue-600/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i data-lucide="trending-up" class="w-10 h-10 text-blue-500"></i>
+                <div class="glass-card p-12 text-center flex flex-col justify-center bg-zinc-950 border-emerald-500/20">
+                    <div class="bg-emerald-600/10 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 border border-emerald-500/20">
+                        <i data-lucide="dollar-sign" class="w-10 h-10 text-emerald-500"></i>
                     </div>
-                    <h3 class="text-2xl font-black text-white mb-4">Financial Resiliency</h3>
-                    <p class="text-slate-400 leading-relaxed mb-8 max-w-sm mx-auto">
-                        The model accounts for a sustained iron ore price of <span class="text-white font-bold">$95/dmt</span>. Sensitivity analysis shows that even at <span class="text-white font-bold">$75/dmt</span>, the lower C1 cost maintains a robust margin of <span class="text-emerald-500 font-bold">14.2%</span>.
+                    <h3 class="text-3xl font-black text-white mb-6 uppercase tracking-tighter italic">CapEx Breakdown</h3>
+                    <p class="text-slate-400 leading-relaxed mb-10 max-w-sm mx-auto text-base">
+                        Allocation focused on <span class="text-white font-bold italic tracking-wide">long-term reliability</span>. High-spec components sourced specifically for Pilbara climatic extremes.
                     </p>
-                    <div class="h-64"><canvas id="capexChart"></canvas></div>
+                    <div class="h-72"><canvas id="capexChart"></canvas></div>
                 </div>
             </div>
         </div>
 
-        <!-- SCHEDA: RISK MATRIX -->
-        <div id="risk" class="tab-content space-y-8">
-            <div class="glass-card p-12 max-w-6xl mx-auto">
-                <div class="text-center mb-12">
-                    <h3 class="text-[10px] font-black uppercase text-blue-500 tracking-[0.4em] mb-4">Operational Risk Matrix</h3>
-                    <p class="text-slate-500 text-sm italic">Categorized by Probality vs Potential Consequence for Tier-1 Assets</p>
+        <!-- SCHEDA: RISK MATRIX (DESIGN MIGLIORATO) -->
+        <div id="risk" class="tab-content space-y-12">
+            <div class="glass-card p-16 max-w-6xl mx-auto">
+                <div class="text-center mb-16">
+                    <h3 class="text-[10px] font-black uppercase text-emerald-500 tracking-[0.6em] mb-4">Strategic Risk Landscape</h3>
+                    <p class="text-slate-500 text-base italic uppercase font-bold tracking-widest opacity-60">Tier-1 Asset Probability vs Consequence</p>
                 </div>
                 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                    <div id="risk-matrix-container" class="grid grid-cols-5 gap-3 max-w-md mx-auto aspect-square">
-                        <!-- Celle matrice iniettate tramite JS -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                    <div id="risk-matrix-container" class="grid grid-cols-5 gap-4 max-w-md mx-auto aspect-square">
+                        <!-- Celle matrice JS -->
                     </div>
                     
-                    <div class="space-y-6">
-                        <div class="p-6 bg-white/5 rounded-2xl border-l-4 border-rose-600">
-                            <h4 class="text-white font-black uppercase text-xs tracking-widest mb-1">R-01: Cyclone Activity</h4>
-                            <p class="text-sm text-slate-500 italic font-medium leading-relaxed">Mitigation: Structural integrity certified to Wind Region D standards and FIFO evacuation protocols.</p>
+                    <div class="space-y-10">
+                        <div class="p-8 bg-zinc-950 rounded-2xl border-l-[10px] border-rose-600 shadow-2xl">
+                            <h4 class="text-white font-black uppercase text-sm tracking-widest mb-2 italic">R-01: Cyclonic Disruptions</h4>
+                            <p class="text-sm text-slate-500 font-medium leading-relaxed">Integrated structural damping for Wind Region D and automated site shutdown protocols.</p>
                         </div>
-                        <div class="p-6 bg-white/5 rounded-2xl border-l-4 border-orange-500">
-                            <h4 class="text-white font-black uppercase text-xs tracking-widest mb-1">R-02: Skilled Labor Gap</h4>
-                            <p class="text-sm text-slate-500 italic font-medium leading-relaxed">Mitigation: Competitive retention bonuses and localized Fly-In Fly-Out allowances for specialists.</p>
-                        </div>
-                        <div class="p-6 bg-white/5 rounded-2xl border-l-4 border-emerald-500">
-                            <h4 class="text-white font-black uppercase text-xs tracking-widest mb-1">R-03: Supply Chain Latency</h4>
-                            <p class="text-sm text-slate-500 italic font-medium leading-relaxed">Mitigation: Local stocking of critical spares for BESS and PV arrays in Port Hedland.</p>
+                        <div class="p-8 bg-zinc-950 rounded-2xl border-l-[10px] border-emerald-500 shadow-2xl">
+                            <h4 class="text-white font-black uppercase text-sm tracking-widest mb-2 italic">R-02: Grid Intermittency</h4>
+                            <p class="text-sm text-slate-500 font-medium leading-relaxed">Redundant 50MWh BESS provides frequency stabilization for the crushing plant microgrid.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- SCHEDA: ROADMAP -->
-        <div id="milestones" class="tab-content space-y-8">
-            <div class="glass-card p-12 max-w-4xl mx-auto">
-                <h3 class="text-2xl font-black mb-16 italic uppercase tracking-widest text-center">Project Roadmap</h3>
-                <div class="space-y-20 border-l-2 border-slate-800 ml-6 pl-12 relative">
-                    <div class="relative">
-                        <div class="absolute -left-[54px] top-1.5 w-4 h-4 rounded-full bg-blue-600 shadow-[0_0_20px_rgba(37,99,235,0.6)] border-4 border-slate-900 z-10"></div>
-                        <p class="text-[10px] text-blue-500 font-black uppercase tracking-[0.2em] mb-2">Phase 1: Concluded</p>
-                        <p class="font-black text-xl text-white">FEED Engineering & Site Mapping</p>
-                        <p class="text-sm text-slate-500 mt-2">LiDAR topography analysis and geotechnical baseline completed.</p>
-                    </div>
-                    <div class="relative">
-                        <div class="absolute -left-[54px] top-1.5 w-4 h-4 rounded-full bg-blue-400 border-4 border-slate-900 z-10"></div>
-                        <p class="text-[10px] text-blue-400 font-black uppercase tracking-[0.2em] mb-2">Phase 2: In Execution</p>
-                        <p class="font-black text-xl text-white">BESS Procurement & Civil Foundations</p>
-                        <p class="text-sm text-slate-500 mt-2">Logistics pipeline secured via Port Hedland; foundation works at 42%.</p>
-                    </div>
-                    <div class="relative opacity-30">
-                        <div class="absolute -left-[54px] top-1.5 w-4 h-4 rounded-full bg-slate-700 border-4 border-slate-900 z-10"></div>
-                        <p class="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em] mb-2">Phase 3: Q1 2027 Milestone</p>
-                        <p class="font-black text-xl text-slate-400">Commissioning & Fleet Integration</p>
-                        <p class="text-sm text-slate-600 mt-2">Final system synchronization with Autonomous Haulage software.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer Esecutivo -->
-        <footer class="mt-24 text-center pb-12 opacity-30">
-            <p class="text-[10px] font-black uppercase tracking-[0.6em] text-slate-500">
-                PISDOE Strategic Portfolio | Tier-1 Recruitment Asset 2026
+        <!-- FOOTER STEALTH -->
+        <footer class="mt-32 text-center pb-16 opacity-30 border-t border-white/5 pt-12">
+            <p class="text-[10px] font-black uppercase tracking-[0.8em] text-slate-500">
+                PISDOE Strategic Portfolio | Recruitment Asset 2026 | Western Australia
             </p>
         </footer>
     </main>
 
     <script>
-        // Inizializzazione icone
         lucide.createIcons();
 
-        // Funzione per Sidebar Mobile
+        // Navigazione Mobile
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
@@ -390,7 +351,7 @@
             overlay.classList.toggle('active');
         }
 
-        // Navigazione schede
+        // Navigazione Schede
         function navigate(sectionId, btn) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.getElementById(sectionId).classList.add('active');
@@ -404,9 +365,9 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Inizializzazione Grafici Senior
+        // Configurazione Grafici Verde/Nero
         window.onload = function() {
-            const chartFont = { size: 10, family: "'Inter', sans-serif", weight: '700' };
+            const chartFont = { size: 10, family: "'Inter', sans-serif", weight: '800' };
             const commonOptions = {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -414,83 +375,91 @@
                     legend: { 
                         display: true, 
                         position: 'top', 
-                        labels: { color: '#64748b', font: chartFont, usePointStyle: true, boxWidth: 6 } 
+                        labels: { color: '#94a3b8', font: chartFont, usePointStyle: true, boxWidth: 6 } 
                     } 
                 },
                 scales: {
                     x: { ticks: { color: '#64748b', font: { size: 10, weight: '700' } }, grid: { display: false } },
-                    y: { ticks: { color: '#64748b', font: { size: 10, weight: '700' } }, grid: { color: 'rgba(255,255,255,0.02)' } }
+                    y: { ticks: { color: '#64748b', font: { size: 10, weight: '700' } }, grid: { color: 'rgba(255,255,255,0.01)' } }
                 }
             };
 
-            // 1. Cash Flow
+            // 1. Line Chart Cash Flow
             new Chart(document.getElementById('cashFlowChart'), {
                 type: 'line',
                 data: {
-                    labels: ['Yr 0', 'Yr 1', 'Yr 2', 'Yr 3', 'Yr 4', 'Yr 5', 'Yr 6'],
+                    labels: ['Year 0', 'Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5', 'Year 6'],
                     datasets: [{
-                        label: 'Cumulative Cash Flow ($M)',
+                        label: 'Cash Flow Projection ($M)',
                         data: [-310, -250, -180, -90, -20, 50, 130],
-                        borderColor: '#3b82f6',
-                        borderWidth: 3,
+                        borderColor: '#10b981',
+                        borderWidth: 5,
                         tension: 0.4,
                         fill: true,
-                        backgroundColor: 'rgba(37, 99, 235, 0.05)',
-                        pointBackgroundColor: '#3b82f6',
-                        pointRadius: 4
+                        backgroundColor: 'rgba(16, 185, 129, 0.05)',
+                        pointBackgroundColor: '#fff',
+                        pointRadius: 6
                     }]
                 },
                 options: commonOptions
             });
 
-            // 2. Revenue
+            // 2. Bar Chart Revenue
             new Chart(document.getElementById('revenueChart'), {
                 type: 'bar',
                 data: {
                     labels: ['2025', '2026', '2027', '2028', '2029'],
                     datasets: [{
-                        label: 'Gross Revenue ($M)',
+                        label: 'Target Gross Revenue ($M)',
                         data: [45, 120, 240, 280, 310],
-                        backgroundColor: '#3b82f6',
-                        borderRadius: 6
+                        backgroundColor: '#10b981',
+                        borderRadius: 4,
+                        hoverBackgroundColor: '#fff'
                     }]
                 },
                 options: commonOptions
             });
 
-            // 3. CAPEX (Pie)
+            // 3. Doughnut Chart CapEx
             new Chart(document.getElementById('capexChart'), {
                 type: 'doughnut',
                 data: {
-                    labels: ['PV Array', 'BESS', 'Civil', 'Software'],
+                    labels: ['Solar PV', 'BESS Hub', 'Logistics', 'Sync Software'],
                     datasets: [{
                         data: [140, 90, 50, 30],
-                        backgroundColor: ['#2563eb', '#3b82f6', '#1e293b', '#64748b'],
-                        borderWidth: 0,
-                        hoverOffset: 15
+                        backgroundColor: ['#10b981', '#059669', '#065f46', '#064e3b'],
+                        borderWidth: 2,
+                        borderColor: '#000',
+                        hoverOffset: 30
                     }]
                 },
                 options: { 
                     ...commonOptions, 
                     scales: undefined,
-                    plugins: { legend: { position: 'bottom', labels: { color: '#cbd5e1', font: chartFont } } }
+                    plugins: { 
+                        legend: { position: 'bottom', labels: { color: '#cbd5e1', font: chartFont } } 
+                    }
                 }
             });
 
-            // Generazione Matrice Rischi 5x5
+            // Generazione Matrice Rischi "Stealth Green"
             const matrix = document.getElementById('risk-matrix-container');
             for(let i=0; i<25; i++) {
                 const cell = document.createElement('div');
                 const row = Math.floor(i/5);
                 const col = i % 5;
-                let color = "bg-slate-800/40";
-                if(row + col >= 6) color = "bg-rose-500/80";
-                else if(row + col >= 4) color = "bg-orange-500/60";
-                else if(row + col >= 2) color = "bg-blue-500/40";
-                cell.className = `${color} rounded-lg transition-all duration-300 hover:scale-110 flex items-center justify-center border border-white/5`;
-                if(i === 3 || i === 8) {
+                
+                let color = "bg-zinc-900"; // Fondo neutro scuro
+                if(row + col >= 6) color = "bg-rose-900/50"; // Rosso critico sfumato
+                else if(row + col >= 4) color = "bg-amber-900/30"; // Arancio
+                else if(row + col >= 2) color = "bg-emerald-900/40"; // Verde sicuro
+                
+                cell.className = `${color} rounded-lg transition-all duration-500 hover:bg-emerald-500 hover:scale-105 flex items-center justify-center border border-white/5 cursor-help`;
+                
+                // Punti di rischio attivi (bianchi su scuro)
+                if(i === 4 || i === 9 || i === 13) {
                     const dot = document.createElement('div');
-                    dot.className = "w-2.5 h-2.5 bg-white rounded-full animate-pulse shadow-[0_0_15px_rgba(255,255,255,1)]";
+                    dot.className = "w-2.5 h-2.5 bg-white rounded-full animate-pulse shadow-[0_0_10px_#fff]";
                     cell.appendChild(dot);
                 }
                 matrix.appendChild(cell);
