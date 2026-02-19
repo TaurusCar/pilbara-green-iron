@@ -1,128 +1,514 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Globe, DollarSign, Target, Leaf, Flame } from "lucide-react";
-import Sidebar from "@/components/dashboard/Sidebar";
-import KpiCard from "@/components/dashboard/KpiCard";
-import CashFlowChart from "@/components/dashboard/CashFlowChart";
-import CapexBreakdown from "@/components/dashboard/CapexBreakdown";
-import StrategicPillars from "@/components/dashboard/StrategicPillars";
-import RiskMatrix from "@/components/dashboard/RiskMatrix";
-import OperationalReadiness from "@/components/dashboard/OperationalReadiness";
-import MilestoneTracker from "@/components/dashboard/MilestoneTracker";
-import RevenueChart from "@/components/dashboard/RevenueChart";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilbara Decarbonization | Strategic Dashboard</title>
+    <!-- Frameworks & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --background: #0f172a;
+            --foreground: #f8fafc;
+            --muted: #64748b;
+            --glass: rgba(30, 41, 59, 0.7);
+        }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--background);
+            color: var(--foreground);
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+        }
+        .text-gradient {
+            background: linear-gradient(to right, #60a5fa, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glow-emerald {
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.15);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .sidebar-link.active {
+            background: rgba(37, 99, 235, 0.2);
+            color: #60a5fa;
+            border-right: 4px solid #2563eb;
+        }
 
-const Index = () => {
-  const [activeSection, setActiveSection] = useState("executive");
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .ml-sidebar { margin-left: 0; }
+            .sidebar { 
+                transform: translateX(-100%); 
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+                width: 280px;
+                z-index: 100;
+            }
+            .sidebar.open { transform: translateX(0); }
+            .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90; }
+            .overlay.active { display: block; }
+        }
+        @media (min-width: 769px) {
+            .ml-sidebar { margin-left: 14rem; }
+        }
 
-  return (
-    <div className="min-h-screen bg-background">
-      <Sidebar activeSection={activeSection} onNavigate={setActiveSection} />
+        canvas { max-width: 100% !important; height: auto !important; }
 
-      <main className="ml-56 p-8">
-        {/* Header */}
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-          <div className="flex items-center gap-2 mb-2">
-            <Globe className="w-4 h-4 text-primary" />
-            <p className="section-label text-primary">Western Australia | Pilbara Region</p>
-          </div>
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-4xl font-bold text-foreground leading-tight">
-                Strategic Decarbonization
-              </h1>
-              <h2 className="text-4xl font-black text-gradient italic">Dashboard</h2>
-              <p className="text-sm text-muted-foreground mt-2">
-                Integrating 120MW Solar/BESS Microgrid for Tier-1 Iron Ore Operations.
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <div className="glass-card px-5 py-3 text-center">
-                <p className="stat-label">Project NPV</p>
-                <p className="text-2xl font-bold font-mono text-foreground mt-1">$124M</p>
-              </div>
-              <div className="glass-card px-5 py-3 text-center glow-emerald border-primary/30">
-                <p className="stat-label">Target IRR</p>
-                <p className="text-2xl font-bold font-mono text-primary mt-1">16.8%</p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        .image-overlay {
+            background: linear-gradient(to bottom, transparent 0%, rgba(15, 23, 42, 0.95) 100%);
+        }
+        
+        .asset-image {
+            transition: transform 0.8s ease;
+        }
+        .asset-card:hover .asset-image {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
 
-        <AnimatePresence mode="wait">
-          {activeSection === "executive" && (
-            <motion.div key="exec" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              {/* JORC Section */}
-              <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-6 mb-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <Target className="w-4 h-4 text-primary" />
-                  <h3 className="text-sm font-semibold text-foreground">JORC Compliance Baseline</h3>
-                </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Following <span className="font-semibold text-foreground">JORC Code 2012</span> standards, the project optimizes 250Mt of Proved Reserves at 61.5% Fe. By reducing diesel dependency by 45%, we achieve a direct{" "}
-                  <span className="font-semibold text-foreground">C1 Cash Cost reduction of $2.30/t</span>, securing long-term asset value.
-                </p>
-              </motion.div>
+    <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
 
-              <div className="grid grid-cols-4 gap-4 mb-6">
-                <KpiCard label="Energy Mix" value="45% Green" sublabel="Solar Displacement" icon={Leaf} variant="highlight" delay={0.15} />
-                <KpiCard label="Carbon Impact" value="-85k tCO2e" sublabel="Annual Abatement" icon={Flame} delay={0.2} />
-                <KpiCard label="C1 Cash Cost" value="$28.40/t" sublabel="↓ $2.30/t vs baseline" icon={DollarSign} delay={0.25} />
-                <KpiCard label="Reserve Grade" value="61.5% Fe" sublabel="250Mt Proved Reserves" delay={0.3} />
-              </div>
-
-              <div className="grid grid-cols-3 gap-6">
-                <div className="col-span-2">
-                  <CashFlowChart />
-                </div>
-                <StrategicPillars />
-              </div>
-            </motion.div>
-          )}
-
-          {activeSection === "financial" && (
-            <motion.div key="fin" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <div className="grid grid-cols-4 gap-4 mb-6">
-                <KpiCard label="Total CAPEX" value="$310M" sublabel="Fully funded" icon={DollarSign} variant="highlight" delay={0.1} />
-                <KpiCard label="Payback Period" value="4.2 Yrs" sublabel="From first production" delay={0.15} />
-                <KpiCard label="EBITDA Margin" value="42%" sublabel="At steady state" delay={0.2} />
-                <KpiCard label="Debt/Equity" value="65/35" sublabel="Project finance structure" delay={0.25} />
-              </div>
-              <div className="grid grid-cols-2 gap-6">
-                <RevenueChart />
-                <CapexBreakdown />
-              </div>
-            </motion.div>
-          )}
-
-          {activeSection === "risk" && (
-            <motion.div key="risk" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <RiskMatrix />
-            </motion.div>
-          )}
-
-          {activeSection === "operations" && (
-            <motion.div key="ops" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <OperationalReadiness />
-            </motion.div>
-          )}
-
-          {activeSection === "milestones" && (
-            <motion.div key="miles" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <MilestoneTracker />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Footer */}
-        <div className="mt-12 text-center">
-          <p className="section-label text-muted-foreground/50">
-            Interactive Project Dashboard | Prepared for Rio Tinto, BHP & Woodside Strategic Recruitment
-          </p>
+    <!-- Mobile Header -->
+    <header class="md:hidden flex items-center justify-between p-4 bg-slate-900 sticky top-0 z-[80] border-b border-white/5">
+        <div class="flex items-center gap-2">
+            <i data-lucide="zap" class="text-blue-500 w-6 h-6"></i>
+            <span class="font-black italic text-xl tracking-tighter">PISDOE</span>
         </div>
-      </main>
-    </div>
-  );
-};
+        <button onclick="toggleSidebar()" class="p-2 text-slate-400">
+            <i data-lucide="menu" id="menu-icon"></i>
+        </button>
+    </header>
 
-export default Index;
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full bg-slate-900 border-r border-white/5 z-[100] md:translate-x-0">
+        <div class="p-6">
+            <div class="flex items-center gap-2 mb-1">
+                <i data-lucide="zap" class="text-blue-500 w-5 h-5"></i>
+                <span class="font-black italic text-xl tracking-tighter">PISDOE</span>
+            </div>
+            <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Management Hub</p>
+        </div>
+        
+        <nav class="mt-4 px-2 space-y-1">
+            <button onclick="navigate('executive', this)" class="sidebar-link active w-full flex items-center gap-3 px-4 py-4 text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-white">
+                <i data-lucide="layout" class="w-4 h-4"></i> Executive Summary
+            </button>
+            <button onclick="navigate('financial', this)" class="sidebar-link w-full flex items-center gap-3 px-4 py-4 text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-white">
+                <i data-lucide="dollar-sign" class="w-4 h-4"></i> Financial Analysis
+            </button>
+            <button onclick="navigate('risk', this)" class="sidebar-link w-full flex items-center gap-3 px-4 py-4 text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-white">
+                <i data-lucide="alert-triangle" class="w-4 h-4"></i> Risk Matrix
+            </button>
+            <button onclick="navigate('operations', this)" class="sidebar-link w-full flex items-center gap-3 px-4 py-4 text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-white">
+                <i data-lucide="users" class="w-4 h-4"></i> Asset Operations
+            </button>
+            <button onclick="navigate('milestones', this)" class="sidebar-link w-full flex items-center gap-3 px-4 py-4 text-sm font-semibold rounded-lg transition-all text-slate-400 hover:text-white">
+                <i data-lucide="check-circle" class="w-4 h-4"></i> Milestones
+            </button>
+        </nav>
+    </aside>
 
+    <!-- Main Content Area -->
+    <main class="ml-sidebar p-5 md:p-10 transition-all">
+        
+        <!-- Header Dashboard -->
+        <div class="mb-10 animate-in">
+            <div class="flex items-center gap-2 mb-3">
+                <i data-lucide="globe" class="w-4 h-4 text-blue-500"></i>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-blue-500">Western Australia | Pilbara Region</p>
+            </div>
+            
+            <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-8">
+                <div>
+                    <h1 class="text-3xl md:text-5xl font-bold leading-tight tracking-tight text-white">Strategic Decarbonization</h1>
+                    <h2 class="text-3xl md:text-5xl font-black text-gradient italic">Dashboard</h2>
+                    <p class="text-sm text-slate-400 mt-3 max-w-xl font-medium">120MW Solar/BESS Microgrid Integration for Tier-1 Iron Ore Operations.</p>
+                </div>
+                
+                <div class="flex gap-4">
+                    <div class="glass-card px-6 py-4 text-center min-w-[120px] flex-1">
+                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Project NPV</p>
+                        <p class="text-2xl md:text-3xl font-black text-white mt-1">$124M</p>
+                    </div>
+                    <div class="glass-card px-6 py-4 text-center glow-emerald border-blue-500/30 min-w-[120px] flex-1">
+                        <p class="text-[10px] text-blue-500 uppercase font-black tracking-widest">Target IRR</p>
+                        <p class="text-2xl md:text-3xl font-black text-blue-500 mt-1">16.8%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Executive Summary -->
+        <div id="executive" class="tab-content active space-y-8">
+            
+            <!-- Hero Image with Mining Machinery -->
+            <div class="relative w-full h-[350px] md:h-[500px] rounded-[2.5rem] overflow-hidden shadow-2xl mb-10 group asset-card">
+                <img src="https://images.unsplash.com/photo-1516192535025-1033f678393e?auto=format&fit=crop&q=80&w=1600" alt="[Image of Mining Excavator]" class="w-full h-full object-cover asset-image">
+                <div class="absolute inset-0 image-overlay flex flex-col justify-end p-8 md:p-12">
+                    <div class="max-w-2xl">
+                        <span class="bg-blue-600 text-white text-[10px] font-black uppercase px-4 py-1.5 rounded-full mb-4 inline-block tracking-widest shadow-lg">Primary Asset Integration</span>
+                        <h3 class="text-3xl md:text-5xl font-black text-white leading-none">Pilbara Fleet Electrification</h3>
+                        <p class="text-slate-300 mt-4 text-sm md:text-lg font-medium italic text-balance">Transitioning to a solar-powered autonomous hybrid model to eliminate diesel dependency and reduce operational overhead.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card p-8 border-l-4 border-blue-600">
+                <div class="flex items-center gap-3 mb-4">
+                    <i data-lucide="target" class="w-5 h-5 text-blue-500"></i>
+                    <h3 class="text-xs font-black uppercase tracking-[0.2em]">JORC Compliance Baseline</h3>
+                </div>
+                <p class="text-sm md:text-base text-slate-400 leading-relaxed max-w-5xl">
+                    Aligned with <span class="text-white font-bold text-xs uppercase tracking-tighter">JORC Code 2012</span> standards, the project optimizes 250Mt of Proved Reserves at 61.5% Fe. By offsetting 45% of diesel consumption, we deliver a direct <span class="text-white font-bold italic text-xs">C1 Cash Cost reduction of $2.30/t</span>, ensuring long-term profitability.
+                </p>
+            </div>
+
+            <!-- KPI Row -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glass-card p-6 hover:border-blue-500/50 transition-all group relative overflow-hidden text-center sm:text-left">
+                    <div class="flex justify-between items-start mb-4 relative z-10">
+                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Energy Mix</p>
+                        <i data-lucide="leaf" class="w-5 h-5 text-emerald-500"></i>
+                    </div>
+                    <p class="text-3xl font-black text-white relative z-10">45% Green</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase mt-1 relative z-10">Solar Displacement</p>
+                </div>
+                <div class="glass-card p-6 text-center sm:text-left">
+                    <div class="flex justify-between items-start mb-4">
+                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Carbon Impact</p>
+                        <i data-lucide="flame" class="w-5 h-5 text-orange-500"></i>
+                    </div>
+                    <p class="text-3xl font-black text-white">-85k tCO2e</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase mt-1">Annual Abatement</p>
+                </div>
+                <div class="glass-card p-6 text-center sm:text-left">
+                    <div class="flex justify-between items-start mb-4">
+                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest">C1 Cash Cost</p>
+                        <i data-lucide="dollar-sign" class="w-5 h-5 text-blue-500"></i>
+                    </div>
+                    <p class="text-3xl font-black text-white">$28.40/t</p>
+                    <p class="text-[10px] text-emerald-500 font-bold uppercase mt-1">↓ $2.30/t vs base</p>
+                </div>
+                <div class="glass-card p-6 text-center sm:text-left">
+                    <div class="flex justify-between items-start mb-4">
+                        <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Reserve Grade</p>
+                        <i data-lucide="database" class="w-5 h-5 text-slate-400"></i>
+                    </div>
+                    <p class="text-3xl font-black text-white">61.5% Fe</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase mt-1">250Mt Reserves</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 glass-card p-8">
+                    <h3 class="text-[10px] font-black uppercase mb-8 text-slate-500 tracking-[0.3em]">Cash Flow Projection ($M)</h3>
+                    <div class="h-80"><canvas id="cashFlowChart"></canvas></div>
+                </div>
+                <div class="glass-card p-8 flex flex-col justify-center">
+                    <h3 class="text-[10px] font-black uppercase mb-8 text-slate-500 tracking-[0.3em]">Strategic Pillars</h3>
+                    <div class="space-y-6">
+                        <div class="flex gap-5 items-center p-5 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all cursor-default group">
+                            <div class="w-12 h-12 rounded-2xl bg-blue-600/20 flex items-center justify-center text-blue-500 font-black text-lg group-hover:bg-blue-600 group-hover:text-white transition-all">01</div>
+                            <div>
+                                <p class="text-sm font-black text-white uppercase tracking-wider">Solar PV Integration</p>
+                                <p class="text-[11px] text-slate-500 font-bold mt-1">120MW High-efficiency Tracking Array</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-5 items-center p-5 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all cursor-default group">
+                            <div class="w-12 h-12 rounded-2xl bg-blue-600/20 flex items-center justify-center text-blue-500 font-black text-lg group-hover:bg-blue-600 group-hover:text-white transition-all">02</div>
+                            <div>
+                                <p class="text-sm font-black text-white uppercase tracking-wider">BESS Microgrid Hub</p>
+                                <p class="text-[11px] text-slate-500 font-bold mt-1">50MWh Load Balancing & Grid Control</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-5 items-center p-5 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all cursor-default group">
+                            <div class="w-12 h-12 rounded-2xl bg-blue-600/20 flex items-center justify-center text-blue-500 font-black text-lg group-hover:bg-blue-600 group-hover:text-white transition-all">03</div>
+                            <div>
+                                <p class="text-sm font-black text-white uppercase tracking-wider">AHS Fleet Sync</p>
+                                <p class="text-[11px] text-slate-500 font-bold mt-1">Electrified Autonomous Transport Sync</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Financials -->
+        <div id="financial" class="tab-content space-y-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glass-card p-6 border-l-4 border-emerald-500">
+                    <p class="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-2">Total CAPEX</p>
+                    <p class="text-3xl font-black text-white">$310M</p>
+                    <p class="text-[10px] text-emerald-500 font-bold uppercase mt-1 tracking-tight">Fully Funded Infrastructure</p>
+                </div>
+                <div class="glass-card p-6">
+                    <p class="text-[10px] text-slate-500 uppercase font-black mb-2 tracking-widest">Payback Period</p>
+                    <p class="text-3xl font-black text-white">4.2 Yrs</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase mt-1">From First Operations</p>
+                </div>
+                <div class="glass-card p-6">
+                    <p class="text-[10px] text-slate-500 uppercase font-black mb-2 tracking-widest">EBITDA Margin</p>
+                    <p class="text-3xl font-black text-white">42%</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase mt-1">Steady State Target</p>
+                </div>
+                <div class="glass-card p-6">
+                    <p class="text-[10px] text-slate-500 uppercase font-black mb-2 tracking-widest">Debt/Equity</p>
+                    <p class="text-3xl font-black text-white">65/35</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase mt-1">Project Finance Structure</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="glass-card p-8">
+                    <h3 class="text-[10px] font-black uppercase mb-10 text-slate-500 tracking-[0.3em]">Revenue Forecast ($M)</h3>
+                    <div class="h-80"><canvas id="revenueChart"></canvas></div>
+                </div>
+                <div class="glass-card p-8">
+                    <h3 class="text-[10px] font-black uppercase mb-10 text-slate-500 tracking-[0.3em]">CAPEX Allocation Breakdown</h3>
+                    <div class="h-80"><canvas id="capexChart"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Risk Landscape -->
+        <div id="risk" class="tab-content space-y-8">
+            <div class="glass-card p-12 max-w-5xl mx-auto text-center">
+                <h3 class="text-[10px] font-black uppercase mb-12 text-slate-500 tracking-[0.4em]">Operational Risk Matrix (5x5)</h3>
+                <div id="risk-matrix-container" class="grid grid-cols-5 gap-4 max-w-lg mx-auto aspect-square">
+                    <!-- Matrix cells injected by JS -->
+                </div>
+                <div class="flex justify-between max-w-lg mx-auto mt-8 text-[11px] font-black uppercase text-slate-500 tracking-widest">
+                    <span>Insignificant</span>
+                    <span class="text-rose-500 font-black">Severe Impact</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Asset Operations -->
+        <div id="operations" class="tab-content space-y-8">
+            <div class="glass-card p-12 text-center relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-10 opacity-5">
+                    <i data-lucide="hard-hat" class="w-64 h-64 text-white"></i>
+                </div>
+                <i data-lucide="hard-hat" class="w-16 h-16 text-blue-500 mx-auto mb-8"></i>
+                <h3 class="text-3xl font-black mb-4 uppercase tracking-wider">Asset Operational Readiness</h3>
+                <p class="text-slate-500 max-w-2xl mx-auto text-lg leading-relaxed italic">Infrastructure mobilization and heavy machinery preparation for Q4 2026 commissioning phase.</p>
+                
+                <!-- Mining Machinery Asset Gallery -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 mb-16">
+                    <div class="relative h-64 rounded-3xl overflow-hidden group border border-white/5 asset-card">
+                        <img src="https://images.unsplash.com/photo-1540821924479-799eba42006a?auto=format&fit=crop&q=80&w=1000" alt="" class="w-full h-full object-cover asset-image">
+                        <div class="absolute inset-0 bg-black/50 flex flex-col justify-end p-6 text-left opacity-100 group-hover:opacity-90 transition-opacity">
+                            <span class="text-blue-400 font-black text-[10px] uppercase tracking-widest mb-1">Drilling Machinery</span>
+                            <p class="text-white font-bold">Autonomous Drill Rigs</p>
+                        </div>
+                    </div>
+                    <div class="relative h-64 rounded-3xl overflow-hidden group border border-white/5 asset-card">
+                        <img src="https://images.unsplash.com/photo-1580137197581-df2bb346a786?auto=format&fit=crop&q=80&w=1000" alt="" class="w-full h-full object-cover asset-image">
+                        <div class="absolute inset-0 bg-black/50 flex flex-col justify-end p-6 text-left opacity-100 group-hover:opacity-90 transition-opacity">
+                            <span class="text-blue-400 font-black text-[10px] uppercase tracking-widest mb-1">Loading Logistics</span>
+                            <p class="text-white font-bold">Tier-1 Electrified Haul Trucks</p>
+                        </div>
+                    </div>
+                    <div class="relative h-64 rounded-3xl overflow-hidden group border border-white/5 asset-card">
+                        <img src="https://images.unsplash.com/photo-1579407559132-75c60207a976?auto=format&fit=crop&q=80&w=1000" alt="" class="w-full h-full object-cover asset-image">
+                        <div class="absolute inset-0 bg-black/50 flex flex-col justify-end p-6 text-left opacity-100 group-hover:opacity-90 transition-opacity">
+                            <span class="text-blue-400 font-black text-[10px] uppercase tracking-widest mb-1">Stockpile Management</span>
+                            <p class="text-white font-bold">High-Capacity Excavators</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                    <div class="p-8 bg-white/5 rounded-3xl border border-white/5">
+                        <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">Workforce Status</p>
+                        <p class="text-3xl font-black uppercase tracking-tighter text-white">85% Ready</p>
+                        <div class="w-full h-2 bg-slate-800 rounded-full mt-4"><div class="w-[85%] h-full bg-blue-600 rounded-full shadow-[0_0_10px_rgba(37,99,235,0.5)]"></div></div>
+                    </div>
+                    <div class="p-8 bg-white/5 rounded-3xl border border-white/5">
+                        <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">Certification</p>
+                        <p class="text-3xl font-black uppercase tracking-tighter text-white">12 Sessions/mo</p>
+                        <p class="text-[10px] text-slate-500 mt-2 font-bold italic uppercase">Ongoing FIFO Training</p>
+                    </div>
+                    <div class="p-8 bg-white/5 rounded-3xl border border-white/5">
+                        <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-3">Grid Sync</p>
+                        <p class="text-3xl font-black uppercase tracking-tighter text-white">Target Q4 26</p>
+                        <p class="text-[10px] text-emerald-500 mt-2 font-black uppercase tracking-widest italic">On Schedule</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Milestones -->
+        <div id="milestones" class="tab-content space-y-8">
+            <div class="glass-card p-12">
+                <h3 class="text-2xl font-black mb-16 italic uppercase tracking-widest text-white border-b border-white/5 pb-6 text-center md:text-left">Project Roadmap</h3>
+                <div class="space-y-16 border-l-2 border-slate-800 ml-6 pl-16 relative">
+                    <div class="relative group">
+                        <div class="absolute -left-[73px] top-2 w-5 h-5 rounded-full bg-blue-600 shadow-[0_0_20px_rgba(37,99,235,0.8)] border-4 border-slate-900 z-10"></div>
+                        <p class="text-[11px] text-blue-500 font-black uppercase tracking-[0.2em] mb-2">Phase 1: Successfully Completed</p>
+                        <p class="font-black text-xl text-white">FEED Engineering & Site Mapping</p>
+                        <p class="text-sm text-slate-500 mt-2 max-w-3xl leading-relaxed">High-resolution LiDAR mapping finalized for 150 hectares of solar field and BESS substation area.</p>
+                    </div>
+                    <div class="relative group">
+                        <div class="absolute -left-[73px] top-2 w-5 h-5 rounded-full bg-blue-400 shadow-[0_0_20px_rgba(96,165,250,0.4)] border-4 border-slate-900 z-10"></div>
+                        <p class="text-[11px] text-blue-400 font-black uppercase tracking-[0.2em] mb-2">Phase 2: In Progress (Active)</p>
+                        <p class="font-black text-xl text-white">BESS Procurement & Civil Foundations</p>
+                        <p class="text-sm text-slate-500 mt-2 max-w-3xl leading-relaxed">Structural commencement of civil works for machinery charging hub and delivery of long-lead items.</p>
+                    </div>
+                    <div class="relative opacity-30">
+                        <div class="absolute -left-[73px] top-2 w-5 h-5 rounded-full bg-slate-700 border-4 border-slate-900 z-10"></div>
+                        <p class="text-[11px] text-slate-500 font-black uppercase tracking-[0.2em] mb-2">Phase 3: Next Milestone (Q1 2027)</p>
+                        <p class="font-black text-xl text-slate-400">Full Microgrid Commissioning & Fleet Sync</p>
+                        <p class="text-sm text-slate-600 mt-2 max-w-3xl leading-relaxed">Full integration of Autonomous Haulage Systems (AHS) with green charging protocols.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-24 text-center pb-12 opacity-30">
+            <p class="text-[10px] font-black uppercase tracking-[0.6em] text-slate-500">
+                Strategic Digital Asset | Prepared for Perth Tier-1 Recruitment
+            </p>
+        </footer>
+    </main>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Mobile Sidebar Functionality
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        // Navigation Tab Manager
+        function navigate(sectionId, btn) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
+            btn.classList.add('active');
+
+            if(window.innerWidth <= 768) {
+                toggleSidebar();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- CHARTS INITIALIZATION ---
+        window.onload = function() {
+            const chartFont = { size: 10, family: "'Inter', sans-serif", weight: '900' };
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { 
+                    legend: { 
+                        display: true, 
+                        position: 'top', 
+                        labels: { color: '#64748b', font: chartFont, usePointStyle: true, boxWidth: 6 } 
+                    } 
+                },
+                scales: {
+                    x: { ticks: { color: '#64748b', font: { size: 10, weight: '700' } }, grid: { display: false } },
+                    y: { ticks: { color: '#64748b', font: { size: 10, weight: '700' } }, grid: { color: 'rgba(255,255,255,0.03)' } }
+                }
+            };
+
+            // 1. Cash Flow Chart
+            new Chart(document.getElementById('cashFlowChart'), {
+                type: 'line',
+                data: {
+                    labels: ['Year 0', 'Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5', 'Year 6'],
+                    datasets: [{
+                        label: 'Cumulative Cash Flow ($M)',
+                        data: [-310, -250, -180, -90, -20, 50, 130],
+                        borderColor: '#2563eb',
+                        borderWidth: 4,
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: 'rgba(37, 99, 235, 0.08)',
+                        pointBackgroundColor: '#2563eb',
+                        pointRadius: 5
+                    }]
+                },
+                options: commonOptions
+            });
+
+            // 2. Revenue Chart
+            new Chart(document.getElementById('revenueChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['2025', '2026', '2027', '2028', '2029'],
+                    datasets: [{
+                        label: 'Gross Revenue Targets ($M)',
+                        data: [45, 120, 240, 280, 310],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 10
+                    }]
+                },
+                options: commonOptions
+            });
+
+            // 3. CAPEX Chart
+            new Chart(document.getElementById('capexChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Solar Infrastructure', 'BESS Systems', 'Civil Works', 'Fleet Software'],
+                    datasets: [{
+                        data: [140, 90, 50, 30],
+                        backgroundColor: ['#2563eb', '#60a5fa', '#1e293b', '#64748b'],
+                        borderWidth: 0,
+                        hoverOffset: 20
+                    }]
+                },
+                options: { 
+                    ...commonOptions, 
+                    scales: undefined,
+                    plugins: { 
+                        legend: { position: 'right', labels: { color: '#cbd5e1', font: chartFont } } 
+                    }
+                }
+            });
+
+            // --- RISK MATRIX GENERATION ---
+            const matrix = document.getElementById('risk-matrix-container');
+            const cells = 25;
+            for(let i=0; i<cells; i++) {
+                const cell = document.createElement('div');
+                const row = Math.floor(i/5);
+                const col = i % 5;
+                let color = "bg-slate-800/40";
+                if(row + col >= 6) color = "bg-rose-500/80";
+                else if(row + col >= 4) color = "bg-orange-500/60";
+                else if(row + col >= 2) color = "bg-blue-500/40";
+                cell.className = `${color} rounded-lg transition-all duration-500 hover:scale-110 flex items-center justify-center border border-white/5`;
+                if(i === 3 || i === 8 || i === 14) {
+                    const dot = document.createElement('div');
+                    dot.className = "w-2.5 h-2.5 bg-white rounded-full animate-pulse shadow-[0_0_15px_rgba(255,255,255,1)]";
+                    cell.appendChild(dot);
+                }
+                matrix.appendChild(cell);
+            }
+        }
+    </script>
+</body>
+</html>
