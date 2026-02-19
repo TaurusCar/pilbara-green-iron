@@ -66,6 +66,10 @@
         }
 
         canvas { max-width: 100% !important; height: auto !important; }
+
+        .image-overlay {
+            background: linear-gradient(to bottom, transparent 0%, rgba(15, 23, 42, 0.8) 100%);
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -145,6 +149,18 @@
 
         <!-- Section: Executive Summary -->
         <div id="executive" class="tab-content active space-y-8">
+            <!-- Hero Image Section -->
+            <div class="relative w-full h-[300px] rounded-[2.5rem] overflow-hidden shadow-2xl mb-8">
+                <img src="https://images.unsplash.com/photo-1578319439584-104c94d37305?auto=format&fit=crop&q=80&w=1600" alt="Mining Haul Truck" class="w-full h-full object-cover">
+                <div class="absolute inset-0 image-overlay flex flex-end items-end p-8 md:p-12">
+                    <div>
+                        <span class="bg-blue-600 text-white text-[10px] font-black uppercase px-3 py-1 rounded-full mb-2 inline-block">Asset Overview</span>
+                        <h3 class="text-2xl md:text-4xl font-black text-white">Pilbara Tier-1 Operations</h3>
+                        <p class="text-slate-300 text-sm md:text-base">Strategic Infrastructure and Decarbonization Assets</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="glass-card p-6 border-l-4 border-blue-600">
                 <div class="flex items-center gap-2 mb-4">
                     <i data-lucide="target" class="w-5 h-5 text-blue-500"></i>
@@ -285,7 +301,29 @@
                 <h3 class="text-2xl font-black mb-3 uppercase tracking-wider">Operational Readiness Status</h3>
                 <p class="text-sm text-slate-500 max-w-lg mx-auto leading-relaxed">System integration, workforce mobilization, and site infrastructure readiness for the Q4 2026 commissioning phase.</p>
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 text-left">
+                <!-- Visual Asset Gallery -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 mb-12">
+                    <div class="relative h-48 rounded-2xl overflow-hidden group border border-white/10">
+                        <img src="https://images.unsplash.com/photo-1509391366360-fe5bb5831d6c?auto=format&fit=crop&q=80&w=800" alt="Solar Farm" class="w-full h-full object-cover transition-transform group-hover:scale-110">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
+                            <span class="text-white font-black text-xs uppercase">Solar Array Installation</span>
+                        </div>
+                    </div>
+                    <div class="relative h-48 rounded-2xl overflow-hidden group border border-white/10">
+                        <img src="https://images.unsplash.com/photo-1578319439584-104c94d37305?auto=format&fit=crop&q=80&w=800" alt="BESS System" class="w-full h-full object-cover transition-transform group-hover:scale-110">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
+                            <span class="text-white font-black text-xs uppercase">Autonomous Fleet Integration</span>
+                        </div>
+                    </div>
+                    <div class="relative h-48 rounded-2xl overflow-hidden group border border-white/10">
+                        <img src="https://images.unsplash.com/photo-1629117349148-35661904a60b?auto=format&fit=crop&q=80&w=800" alt="Pilbara Earth" class="w-full h-full object-cover transition-transform group-hover:scale-110">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
+                            <span class="text-white font-black text-xs uppercase">Pilbara Site Infrastructure</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
                     <div class="p-6 bg-white/5 rounded-2xl border border-white/5">
                         <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Workforce Readiness</p>
                         <p class="text-2xl font-black uppercase tracking-tighter">85% Complete</p>
