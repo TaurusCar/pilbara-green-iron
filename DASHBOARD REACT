@@ -1,0 +1,127 @@
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Globe, DollarSign, Target, Leaf, Flame } from "lucide-react";
+import Sidebar from "@/components/dashboard/Sidebar";
+import KpiCard from "@/components/dashboard/KpiCard";
+import CashFlowChart from "@/components/dashboard/CashFlowChart";
+import CapexBreakdown from "@/components/dashboard/CapexBreakdown";
+import StrategicPillars from "@/components/dashboard/StrategicPillars";
+import RiskMatrix from "@/components/dashboard/RiskMatrix";
+import OperationalReadiness from "@/components/dashboard/OperationalReadiness";
+import MilestoneTracker from "@/components/dashboard/MilestoneTracker";
+import RevenueChart from "@/components/dashboard/RevenueChart";
+
+const Index = () => {
+  const [activeSection, setActiveSection] = useState("executive");
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Sidebar activeSection={activeSection} onNavigate={setActiveSection} />
+
+      <main className="ml-56 p-8">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+          <div className="flex items-center gap-2 mb-2">
+            <Globe className="w-4 h-4 text-primary" />
+            <p className="section-label text-primary">Western Australia | Pilbara Region</p>
+          </div>
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-foreground leading-tight">
+                Strategic Decarbonization
+              </h1>
+              <h2 className="text-4xl font-black text-gradient italic">Dashboard</h2>
+              <p className="text-sm text-muted-foreground mt-2">
+                Integrating 120MW Solar/BESS Microgrid for Tier-1 Iron Ore Operations.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <div className="glass-card px-5 py-3 text-center">
+                <p className="stat-label">Project NPV</p>
+                <p className="text-2xl font-bold font-mono text-foreground mt-1">$124M</p>
+              </div>
+              <div className="glass-card px-5 py-3 text-center glow-emerald border-primary/30">
+                <p className="stat-label">Target IRR</p>
+                <p className="text-2xl font-bold font-mono text-primary mt-1">16.8%</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        <AnimatePresence mode="wait">
+          {activeSection === "executive" && (
+            <motion.div key="exec" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              {/* JORC Section */}
+              <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-6 mb-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <Target className="w-4 h-4 text-primary" />
+                  <h3 className="text-sm font-semibold text-foreground">JORC Compliance Baseline</h3>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Following <span className="font-semibold text-foreground">JORC Code 2012</span> standards, the project optimizes 250Mt of Proved Reserves at 61.5% Fe. By reducing diesel dependency by 45%, we achieve a direct{" "}
+                  <span className="font-semibold text-foreground">C1 Cash Cost reduction of $2.30/t</span>, securing long-term asset value.
+                </p>
+              </motion.div>
+
+              <div className="grid grid-cols-4 gap-4 mb-6">
+                <KpiCard label="Energy Mix" value="45% Green" sublabel="Solar Displacement" icon={Leaf} variant="highlight" delay={0.15} />
+                <KpiCard label="Carbon Impact" value="-85k tCO2e" sublabel="Annual Abatement" icon={Flame} delay={0.2} />
+                <KpiCard label="C1 Cash Cost" value="$28.40/t" sublabel="↓ $2.30/t vs baseline" icon={DollarSign} delay={0.25} />
+                <KpiCard label="Reserve Grade" value="61.5% Fe" sublabel="250Mt Proved Reserves" delay={0.3} />
+              </div>
+
+              <div className="grid grid-cols-3 gap-6">
+                <div className="col-span-2">
+                  <CashFlowChart />
+                </div>
+                <StrategicPillars />
+              </div>
+            </motion.div>
+          )}
+
+          {activeSection === "financial" && (
+            <motion.div key="fin" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <div className="grid grid-cols-4 gap-4 mb-6">
+                <KpiCard label="Total CAPEX" value="$310M" sublabel="Fully funded" icon={DollarSign} variant="highlight" delay={0.1} />
+                <KpiCard label="Payback Period" value="4.2 Yrs" sublabel="From first production" delay={0.15} />
+                <KpiCard label="EBITDA Margin" value="42%" sublabel="At steady state" delay={0.2} />
+                <KpiCard label="Debt/Equity" value="65/35" sublabel="Project finance structure" delay={0.25} />
+              </div>
+              <div className="grid grid-cols-2 gap-6">
+                <RevenueChart />
+                <CapexBreakdown />
+              </div>
+            </motion.div>
+          )}
+
+          {activeSection === "risk" && (
+            <motion.div key="risk" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <RiskMatrix />
+            </motion.div>
+          )}
+
+          {activeSection === "operations" && (
+            <motion.div key="ops" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <OperationalReadiness />
+            </motion.div>
+          )}
+
+          {activeSection === "milestones" && (
+            <motion.div key="miles" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <MilestoneTracker />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Footer */}
+        <div className="mt-12 text-center">
+          <p className="section-label text-muted-foreground/50">
+            Interactive Project Dashboard | Prepared for Rio Tinto, BHP & Woodside Strategic Recruitment
+          </p>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default Index;
